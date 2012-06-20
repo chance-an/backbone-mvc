@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" language="JavaScript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="http://underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="http://backbonejs.org/backbone-min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../backbone-mvc.js"></script>
+    <script type="text/javascript" language="JavaScript" >
+
+        Backskin.namespace('MyApp.Controllers');
+
+        MyApp.Controllers.DashboardController = Backskin.Controller.extend({
+            name: 'dashboard', /* the only mandatory field */
+
+            /**
+             * This is a common action method, it is invoked automatically if url matches
+             */
+            actionMethod: function(){
+                return true;
+            },
+
+
+            /**
+             * This function will remain untouched, the router cannot see this method
+             */
+            _privateMethod: function(){
+
+            }
+        });
+
+        MyApp.Controllers.ArticlesController = Backskin.Controller.extend({
+            name: 'articles', /* the only mandatory field */
+
+            /**
+             * This is am action method which is invoked only after session checking
+             */
+            user_actionMethod1: function(){
+
+            },
+
+            /**
+             * This is just another session enabled method
+             */
+            user_actionMethod2: function(){
+
+            }
+        });
+
+        MyApp.Controllers.AdminController = Backskin.Controller.extend({
+            name: 'admin', /* the only mandatory field */
+
+            checkSessionValid : function(){
+                return false;
+            },
+
+            /**
+             * This shows that the `checkSessionValid` can be configured with different privilege settings
+             */
+            user_actionMethod: function(){
+
+            },
+
+
+            /**
+             * This function will remain untouched, the router cannot see this method
+             */
+            _privateMethod: function(){
+
+            }
+        });
+
+        var router = new Backskin.Router(); //please use the new automatic router
+        Backbone.history.start(); //please still call Backbone's facility here
+
+
+    </script>
+    <title>Backskin Example</title>
+</head>
+<body>
+
+</body>
+</html>
