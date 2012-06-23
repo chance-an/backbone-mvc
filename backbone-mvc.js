@@ -59,6 +59,8 @@
 
         //Controllers
         Controller: {
+            _inheritedMethodsDefinition: {}, // store all the intact methods from ancestry
+
             childMethods: {
 
             },
@@ -73,21 +75,16 @@
                 return (new $.Deferred()).resolve();
             },
 
-            checkSessionValid: function(){
-                if(typeof this['childMethods']['checkSessionValid'] === 'function'){
-                    var result = this['childMethods']['checkSessionValid'].apply(this, arguments);
+            checkSession: function(){
+                if(typeof this['childMethods']['checkSession'] === 'function'){
+                    var result = this['childMethods']['checkSession'].apply(this, arguments);
                     if(isDeferred(result)){
                         return result.pipe(function(){ return true; },
                         function(){ return false; });
                     }
-                    var deferred = new $.Deferred();
-                    if(result){
-                        deferred.resolve(true);
-                    }else{
-                        deferred.reject(false);
-                    }
-                    return deferred;
+                    return assertDeferredByResult(new $.Deferred(), result ? true : false);
                 }else{
+                    //if not defined, then always successful
                     return (new $.Deferred()).resolve(true);
                 }
             },
@@ -95,37 +92,6 @@
             'default': function(){
                 //this function will list all the actions of the controller
                 //intend to be overridden in most of the cases
-            },
-
-            extend: function(properties){
-                var name = properties['name'];
-                if(typeof name === 'undefined'){
-                    throw '\'name\' property is mandatory ';
-                }
-
-                //special handling of method override in inheritance
-                var tmpAbstractControllerProperties = _.extend({}, Backskin.Controller);
-                _.each(systemActions, function(v){
-                    if(v in properties){
-                        tmpAbstractControllerProperties.childMethods[v] = properties[v];
-                    }
-                });
-                var actionMethods = {};
-                _.each(properties, function(value, propertyName){
-                    if (typeof value !== 'function' || propertyName[0] === '_'
-                        || _.indexOf(systemActions, propertyName) >= 0){
-                        return false;
-                    }
-
-                    actionMethods[propertyName] = wrapActionExecution(value);
-                });
-                _.extend(tmpAbstractControllerProperties, actionMethods);
-                //get around of singleton inheritance issue by using mixin
-                var _controllerClass = ControllerSingleton.extend(_.extend(properties, tmpAbstractControllerProperties));
-                //Register Controller
-                ControllersPool[name] = _controllerClass;
-
-                return _controllerClass;
             }
         },
 
@@ -174,11 +140,62 @@
         })
     });
 
+    Backskin.Controller.extend = _extendMethodGenerator(Backskin.Controller);
+
     //internal variables
     var ControllersPool = {};
-    var systemActions = ['beforeFilter', 'afterRender', 'checkSessionValid'];
+    var systemActions = ['initialize', 'beforeFilter', 'afterRender', 'checkSession'];
 
     //internal functions
+    function _extendMethodGenerator(klass){
+        return function(properties){
+            var name = properties['name'];
+            if(typeof name === 'undefined'){
+                throw '\'name\' property is mandatory ';
+            }
+
+            // also inherits the methods from ancestry
+            properties = _.extend({}, klass._inheritedMethodsDefinition, properties);
+
+            //special handling of method override in inheritance
+            var tmpAbstractControllerProperties = _.extend({}, Backskin.Controller);
+            _.each(systemActions, function(v){
+                if(v in properties){
+                    //backup those methods, since they will be overwritten
+                    tmpAbstractControllerProperties.childMethods[v] = properties[v];
+                }
+            });
+            var actionMethods = {};
+            _.each(properties, function(value, propertyName){
+                if (typeof value !== 'function' || propertyName[0] === '_'
+                    || _.indexOf(systemActions, propertyName) >= 0){
+                    return false;
+                }
+
+                actionMethods[propertyName] = wrapActionExecution(value);
+            });
+            _.extend(tmpAbstractControllerProperties, actionMethods);
+
+
+            var _finalCLassProperties = _.extend({}, properties, tmpAbstractControllerProperties);
+            _finalCLassProperties = _.pick(_finalCLassProperties,
+                _.difference(_.keys(_finalCLassProperties), ['extend', '_inheritedMethodsDefinition']));
+
+            //get around of singleton inheritance issue by using mixin
+            var _controllerClass = ControllerSingleton.extend(_finalCLassProperties);
+            //special inheritance utility method handling
+            _.extend(_controllerClass, {
+                extend : _extendMethodGenerator(_controllerClass),
+                _inheritedMethodsDefinition :_.extend({}, klass._inheritedMethodsDefinition, properties)
+            });
+
+            //Register Controller
+            ControllersPool[name] = _controllerClass;
+
+            return _controllerClass;
+        }
+    }
+
     function _d(a){
         console.log(a);
     }
