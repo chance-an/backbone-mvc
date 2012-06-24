@@ -59,52 +59,35 @@
 
         //Controllers
         Controller: {
-            _inheritedMethodsDefinition: {}, // store all the intact methods from ancestry
-
-            childMethods: {
-
-            },
-
             beforeFilter: function(){
-                _d(this.name + '::beforeFiler');
                 return (new $.Deferred()).resolve();
             },
 
             afterRender: function(){
-                _d(this.name + '::afterRender');
                 return (new $.Deferred()).resolve();
             },
 
             checkSession: function(){
-                if(typeof this['childMethods']['checkSession'] === 'function'){
-                    var result = this['childMethods']['checkSession'].apply(this, arguments);
-                    if(isDeferred(result)){
-                        return result.pipe(function(){ return true; },
-                        function(){ return false; });
-                    }
-                    return assertDeferredByResult(new $.Deferred(), result ? true : false);
-                }else{
-                    //if not defined, then always successful
-                    return (new $.Deferred()).resolve(true);
-                }
+                //if not defined, then always succeed
+                return (new $.Deferred()).resolve(true);
             },
 
             'default': function(){
                 //this function will list all the actions of the controller
                 //intend to be overridden in most of the cases
+                return true;
             }
         },
 
         Router: Backbone.Router.extend({
+            _history: [],
+
             routes: {
                 "*components" : 'dispatch'
             },
 
             dispatch: function(actionPath){
-                _d('Dispatch');
-                _d(arguments);
-
-                var components = actionPath.split('/');
+                var components = actionPath.replace(/\/+$/g, '').split('/');
                 var controllerName = undefined;
 
                 //look for controllers
@@ -125,29 +108,41 @@
 
                 var action = components.length > 1 ? components[1] : 'default';
 
-                if( typeof controller[action] !== 'function'){
+                if( typeof controller._actions[action] !== 'function'){
                     return this['404'](); //no such action, reject
                 }
 
                 var _arguments =  components.length > 2 ? _.rest(components, 2) : [];
 
+                addHistoryEntry(this, controllerName, action, _arguments);
                 return invokeAction(controllerName, action, _arguments);
             },
 
             '404': function(){
                 //do nothing, expect overriding
+            },
+
+            getLastAction: function (){
+                return _.last(this._history, 1)[0];
             }
         })
     });
 
-    Backskin.Controller.extend = _extendMethodGenerator(Backskin.Controller);
+    Backskin.Controller.extend = _extendMethodGenerator(Backskin.Controller, {});
 
     //internal variables
     var ControllersPool = {};
     var systemActions = ['initialize', 'beforeFilter', 'afterRender', 'checkSession'];
 
     //internal functions
-    function _extendMethodGenerator(klass){
+    /**
+     *
+     * @param klass the current klass object
+     * @param _inheritedMethodsDefinition store all inherited methods from the ancestors(in closure only)
+     * @return {Function}
+     * @private
+     */
+    function _extendMethodGenerator(klass, _inheritedMethodsDefinition){
         return function(properties){
             var name = properties['name'];
             if(typeof name === 'undefined'){
@@ -155,38 +150,43 @@
             }
 
             // also inherits the methods from ancestry
-            properties = _.extend({}, klass._inheritedMethodsDefinition, properties);
+            properties = _.extend({}, _inheritedMethodsDefinition, properties);
 
             //special handling of method override in inheritance
-            var tmpAbstractControllerProperties = _.extend({}, Backskin.Controller);
-            _.each(systemActions, function(v){
-                if(v in properties){
-                    //backup those methods, since they will be overwritten
-                    tmpAbstractControllerProperties.childMethods[v] = properties[v];
-                }
-            });
-            var actionMethods = {};
+            var tmpControllerProperties = _.extend({}, Backskin.Controller);
+
+            var actionMethods = {}, secureActions = {};
             _.each(properties, function(value, propertyName){
+                tmpControllerProperties[propertyName] = value; // transfer the property
                 if (typeof value !== 'function' || propertyName[0] === '_'
                     || _.indexOf(systemActions, propertyName) >= 0){
                     return false;
                 }
 
-                actionMethods[propertyName] = wrapActionExecution(value);
+                actionMethods[propertyName] = value;
+                if(propertyName.match(/^user_/i)){
+                    secureActions[propertyName] = value;
+                    var shortName = propertyName.replace(/^user_/i, '');
+                    if(typeof properties[shortName] !== 'function'){
+                        // if the shortname function is not defined separately, also account it for a secure method
+                        secureActions[shortName] = value;
+                        actionMethods[shortName] = value;
+                    }
+                }
             });
-            _.extend(tmpAbstractControllerProperties, actionMethods);
 
-
-            var _finalCLassProperties = _.extend({}, properties, tmpAbstractControllerProperties);
-            _finalCLassProperties = _.pick(_finalCLassProperties,
-                _.difference(_.keys(_finalCLassProperties), ['extend', '_inheritedMethodsDefinition']));
+            _.extend(tmpControllerProperties, actionMethods, {
+                _actions : actionMethods,
+                _secureActions: secureActions
+            });
+            tmpControllerProperties = _.pick(tmpControllerProperties,
+                _.difference(_.keys(tmpControllerProperties), ['extend']));
 
             //get around of singleton inheritance issue by using mixin
-            var _controllerClass = ControllerSingleton.extend(_finalCLassProperties);
+            var _controllerClass = ControllerSingleton.extend(tmpControllerProperties);
             //special inheritance utility method handling
             _.extend(_controllerClass, {
-                extend : _extendMethodGenerator(_controllerClass),
-                _inheritedMethodsDefinition :_.extend({}, klass._inheritedMethodsDefinition, properties)
+                extend : _extendMethodGenerator(_controllerClass, _.extend({}, _inheritedMethodsDefinition, properties))
             });
 
             //Register Controller
@@ -206,6 +206,9 @@
     }
 
     function assertDeferredByResult(deferred, result){
+        if(typeof result == 'undefined'){
+            result = true;
+        }
         return deferred[result? 'resolve' : 'reject'](result);
     }
 
@@ -234,47 +237,62 @@
 
     }
 
-    function wrapActionExecution(method){
-        return function(){
-            var deferred = $.Deferred();
-            //do beforeFilter
-            var result = this.beforeFilter();
-            if(isDeferred(result)){
-                deferred = result;
-            }else{
-                assertDeferredByResult(deferred, result);
-            }
-
-            //invoke the action
-            deferred = deferred.pipe(_.bind(function(){
-                var result = method.apply(this, arguments);
-
-                if(isDeferred(result)){
-                    return result;
-                }else{
-                    return assertDeferredByResult(new $.Deferred(), result);
-                }
-            }, this));
-
-
-            //do afterRender
-            deferred = deferred.pipe(_.bind(function(){
-                var result = this.afterRender();
-                if(isDeferred(result)){
-                    return result;
-                }else{
-                    return assertDeferredByResult(new $.Deferred(), result);
-                }
-            }, this));
-
-            return deferred;
-        }
-    }
-
     function invokeAction(controllerName, action, _arguments){
         var controller =  new ControllersPool[controllerName];
 
-        return controller[action].call(controller, _arguments);
+        var hooksParameters = [action].concat(_arguments);
+        var deferred = $.Deferred();
+        //do beforeFilter
+        var result = controller.beforeFilter.apply(controller, hooksParameters);
+        if(isDeferred(result)){
+            deferred = result;
+        }else{
+            assertDeferredByResult(deferred, result);
+        }
+
+        //check if secure method
+        if(typeof controller._secureActions[action] === 'function'){
+            //do session checking
+            deferred = deferred.pipe(function(){
+                var result = controller['checkSession'].apply(controller, _arguments);
+
+                if(isDeferred(result)){
+                    return result;
+                }else{
+                    return assertDeferredByResult(new $.Deferred(), result);
+                }
+            })
+        }
+
+        //invoke the action
+        deferred = deferred.pipe(function(){
+            var result = controller[action].apply(controller, _arguments);
+
+            if(isDeferred(result)){
+                return result;
+            }else{
+                return assertDeferredByResult(new $.Deferred(), result);
+            }
+        });
+
+        //do afterRender
+        deferred = deferred.pipe(function(){
+            var result = controller.afterRender.apply(controller, hooksParameters);
+            if(isDeferred(result)){
+                return result;
+            }else{
+                return assertDeferredByResult(new $.Deferred(), result);
+            }
+        });
+
+        return deferred;
+    }
+
+    function addHistoryEntry(router, controller_name, action, _arguments){
+        if(router._history.length > 888){
+            router._history = _.last(router._history, 888);
+        }
+        router._history.push([controller_name, action, _arguments]);
     }
 
     window.debug = function(){

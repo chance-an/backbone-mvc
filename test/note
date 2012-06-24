@@ -1,1 +1,4 @@
 * Controller multiple-level inheritance
+* Private methods cannot be used as action handler
+* secure method invocation
+* secure method short name checking
