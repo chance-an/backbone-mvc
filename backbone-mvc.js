@@ -125,7 +125,58 @@
             getLastAction: function (){
                 return _.last(this._history, 1)[0];
             }
-        })
+        }),
+
+        Model: {
+            extend: function(properties){
+                properties = _.extend({
+                    __fetchSuccessCallback: null,
+                    __fetchErrorCallback: null,
+
+                    fetch: function(options){
+                        options = options || {};
+                        var backbone_fetch = Backbone.Model.prototype.fetch;
+                        var success = options.success;
+                        options.success = function(model, resp){
+                            if(success) success(model, resp);
+                            if(model.__fetchSuccessCallback){
+                                var tmp = model.__fetchSuccessCallback;
+                                model.__fetchSuccessCallback = null;
+                                tmp.apply(model);
+                            }
+                        };
+                        var error = options.error;
+                        options.error = function(model, resp){
+                            if(error) error(model, resp);
+                            if(model.__fetchErrorCallback){
+                                var tmp = model.__fetchErrorCallback;
+                                model.__fetchErrorCallback = null;
+                                tmp.apply(model);
+                            }
+                        };
+                        backbone_fetch.apply(this, [options].concat(_.rest(arguments)));
+                    },
+
+                    parse: function(response){
+                        this.__fetchSuccessCallback = null;
+                        this.__fetchErrorCallback = null;
+
+                        if(!response || response.error){
+                            this.__fetchErrorCallback = function(){
+                                this.trigger('error', (response && response.error) || response);
+                            }.bind(this);
+                            return {};
+                        }
+                        this.__fetchSuccessCallback = function(){
+                            this.trigger('read', response.data);
+                        }.bind(this);
+                        return response.data;
+                    }
+                }, properties);
+
+                return Backbone.Model.extend(properties);
+            }
+        }
     });
 
     Backskin.Controller.extend = _extendMethodGenerator(Backskin.Controller, {});
