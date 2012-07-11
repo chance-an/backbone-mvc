@@ -245,3 +245,23 @@ a {
 .cf {
   zoom:1;
 }
+
+section.chapter p, section.chapter li{
+    text-align: justify;
+}
+
+section.chapter li{
+    margin-bottom: 0.5em;
+}
+
+strong.red{
+    color: #FF8080;
+}
+
+strong.blue{
+    color: #9E9EFF;
+}
+
+div.syntaxhighlighter {
+    margin: 1.5em 0!important;
+}

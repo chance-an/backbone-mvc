@@ -1,62 +1,188 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+<html >
+<head >
+    <meta charset='utf-8' >
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <title>Backskin by chance-an</title>
-  </head>
+    <script type="text/javascript" language="JavaScript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="http://underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="http://backbonejs.org/backbone-min.js"></script>
+    <script type="text/javascript" src="javascripts/SyntaxHighlighter/XRegExp.js"></script> <!-- XRegExp is bundled with the final shCore.js during build -->
+    <script type="text/javascript" src="javascripts/SyntaxHighlighter/shCore.js"></script>
+    <script type="text/javascript" src="javascripts/SyntaxHighlighter/shAutoloader.js"></script>
+    <script src="javascripts/backbone-mvc.js" type="text/javascript" language="JavaScript"></script>
+    <script src="javascripts/main.js" type="text/javascript" language="JavaScript"></script>
 
-  <body>
+    <link type="text/css" rel="stylesheet" href="stylesheets/SyntaxHighlighter/shCoreRDark.css"/>
+    <link type="text/css" rel="Stylesheet" href="stylesheets/SyntaxHighlighter/shThemeRDark.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <!--<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />-->
 
-    <header>
-      <div class="container">
-        <h1>Backskin</h1>
-        <h2></h2>
+    <title >Backskin : Add Controllers to Backbone.js</title >
+</head >
 
-        <section id="downloads">
-          <a href="https://github.com/chance-an/backskin/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/chance-an/backskin/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/chance-an/backskin" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+<body >
 
-    <div class="container">
-      <section id="main_content">
-        <h3>Welcome to GitHub Pages.</h3>
+<header >
+    <div class="container" >
+        <h1 >Backskin</h1 >
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+        <h2 ></h2 >
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+        <section id="downloads" >
+            <a href="https://raw.github.com/chance-an/backskin/master/backbone-mvc.js" class="btn" >Download
+                backbone-mvc.js</a >
+            <a href="https://github.com/chance-an/backskin" class="btn btn-github" ><span class="icon" ></span >View on
+                GitHub</a >
+        </section >
+    </div >
+</header >
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<div class="container" >
+    <section id="main_content" >
+        <section class="chapter" >
+            <p >Backskin adds the missing Controller components into your project if you also use
+                <a href="http://github.com/documentcloud/backbone/" >Backbone.js</a >, so now you have a complete MVC
+                framework. Like
+                <a href="http://cakephp.org/" >CakePHP</a >, it automatically routes your urls to the correct controller
+                and its actions, but it is a framework for the web front end.
+            </p >
+        </section >
 
-<h3>Designer Templates</h3>
+        <section class="chapter" >
+            <h3 >Introduction</h3 >
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+            <p >Backbone.js does an excellent job of keeping data in sync between the HTML UI and your Javascript logic.
+                However the difficulties we face when
+                we build Javascript web applications are not completely addressed by Backbone.js . Sometimes the difficulty of
+                efficiently organizing the Javascript logic itself is prominent. Using the urls to lead the execution of Javascript logic
+                is a good way to implement your business logic. The browsers' assumption of a traditional server/client
+                model is not compromised, so the browsers' basic features can be preserved. It also helps resume the correct
+                stage in your business flow from a stateless page.
+            <p>Backbone.js provides
+                <a href="http://backbonejs.org/#Router">Router</a> component to map an url to a function.
+                It becomes cumbersome when the application is divided into many modules and there are many operations to
+                be mapped for different urls. Besides, due to the limitations of the language itself, it is not easy to
+                share common processes(like pre-processors and post-processors) among those operations without a lot code duplication.
+                It will become even verbose if your application has a lot asynchronous calls.
+            </p >
+            <p>
+                Backskin is designed just to address these issues.
+            </p>
+            <p >Now you don't have to worry about the Router. Backskin takes care of the chores for you and provides you the
+                Controllers you have longed. Just define the Controllers and it starts to work automatically. You also get
+                the functionality of automatic session checking and event hooks like 'beforeFilter' and 'afterRender'.
+                There are also some utilities provided as well.
+            </p >
+            <p> Backskin doesn't accomplish what Backbone cannot achieve, but it makes many tasks easier by providing
+                many conveniences. So it becomes very practical and useful.</p>
+        </section >
 
-<h3>Rather Drive Stick?</h3>
+        <section class="chapter" >
+            <h3 >Getting started</h3 >
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+            <p >Backskin depends on some other libraries. Before importing it, JQuery, Underscore and Backbone.js must also be imported.</p >
+            <p >The source code file for Backskin is currently called <a href="https://raw.github.com/chance-an/backskin/master/backbone-mvc.js">backbone-mvc.js</a></p >
+<pre class="brush: html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;script src=&quot;http://code.jquery.com/jquery-1.7.2.min.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;http://underscorejs.org/underscore-min.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;http://backbonejs.org/backbone-min.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;backbone-mvc.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+    &lt;/head&gt;
 
-<h3>Authors and Contributors</h3>
+...
+&lt;/html&gt;
+</pre >
+       <p>Then you can start to define your controllers. It follows the same syntax as you define Model and View. To define a <code>Controller</code>,
+           use <code>Backskin.Controler.extend(properties)</code> method :</p>
+<pre class="brush: javascript">
+    var Controller1 = Backskin.Controller.extend({
+        name: 'ctrl1', /* the only mandatory field */
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+        /**
+         * This is a common action method, it is invoked
+         * automatically if url matches
+         */
+        hello: function(){
+            alert('Hello world!');
+        },
 
-<h3>Support or Contact</h3>
+        helloInChinese: function(){
+            //you can invoke any method in this controller (including the private methods for sure)
+            this._privateMethod();
+        },
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
+        /**
+         * This function will remain untouched, the router cannot see
+         * this method
+         */
+        _privateMethod: function(){
+            alert('你好世界!');
+        }
+    })
+</pre>
+        <h5>Notice:</h5>
+        <ul>
+            <li>You can put the attributes and methods for your <code>Controller</code> in the <code>properties</code> parameter.</li>
+            <li>You must at least specify the <code>name</code> attribute, so the router will know what is the controller's name in the url.</li>
+            <li>The methods that do not start with an underscore(_) is action methods, and will be mapped by urls. The ones that start with an underscore
+                are private methods, which will be disregarded by the router.</li>
+        </ul>
 
-    
-  </body>
-</html>
+        <p>The last step is to create <strong class="blue">Backskin</strong>'s router instance, and start the
+            <strong class="red">Backbone</strong>'s <a href="http://backbonejs.org/#History">History</a> component, so the
+        routing mechanism will take effect.</p>
+
+<pre class="brush: javascript">
+
+    var router = new Backskin.Router(); //please use the new automatic router
+    Backbone.history.start(); //please still call Backbone's facility here
+
+</pre>
+        <p>That's all. Give it a try. (Be aware of the URL change in your browser.)</p>
+
+        <p>Trigger <code>hello()</code> : <a href="#ctrl1/hello">#ctrl1/hello</a></p>
+        <p>Trigger <code>helloInChinese()</code> : <a href="#ctrl1/helloInChinese">#ctrl1/helloInChinese</a></p>
+
+        <h5>Notice:</h5>
+        <ul>
+            <li>You only need to define the <code>Controller</code>, you don't even have to instantiate it.</li>
+            <li>If you directly visit that URL(with hash), the method will still be invoked.</li>
+        </ul>
+        </section >
+
+        <section class="chapter" >
+            <h3 >Features</h3 >
+
+            <h4>Controllers are Singletons</h4 >
+
+            <h4>Controller Inheritance</h4 >
+        </section >
+
+
+        <!--<h3 >Authors and Contributors</h3 >-->
+
+        <!--<p >You can <a href="https://github.com/blog/821" class="user-mention" >@mention</a > a GitHub username to-->
+            <!--generate-->
+            <!--a link to their profile. The resulting <code >&lt;a&gt;</code > element will link to the contributor's-->
+            <!--GitHub-->
+            <!--Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention" >@defunkt</a >),-->
+            <!--PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention" >@pjhyett</a >), and Tom Preston-Werner-->
+            <!--(<a href="https://github.com/mojombo" class="user-mention" >@mojombo</a >) founded GitHub.-->
+        <!--</p >-->
+
+        <h3 >Support or Contact</h3 >
+        <p>Have questions or suggestions? Please contact <a href="https://github.com/chance-an">Changsi An</a> by me@anchangsi.com .</p>
+        <!--<p >Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages" >http://help.github.com/pages</a >-->
+            <!--or contact <a href="mailto:support@github.com" >support@github.com</a > and we’ll help you sort it out.-->
+        <!--</p >-->
+    </section >
+</div >
+
+
+</body >
+</html >
