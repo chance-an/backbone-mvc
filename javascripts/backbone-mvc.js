@@ -81,6 +81,7 @@
 
         Router: Backbone.Router.extend({
             _history: [],
+            _reportDeferred : null,
 
             routes: {
                 "*components" : 'dispatch'
@@ -115,6 +116,7 @@
                 var _arguments =  components.length > 2 ? _.rest(components, 2) : [];
 
                 addHistoryEntry(this, controllerName, action, _arguments);
+
                 return invokeAction(controllerName, action, _arguments);
             },
 
@@ -124,6 +126,18 @@
 
             getLastAction: function (){
                 return _.last(this._history, 1)[0];
+            },
+
+            navigate: function(fragment, options){
+                var _options = _.extend({}, options);
+                _options.trigger = false;
+                Backbone.Router.prototype.navigate.call(this, fragment, _options);
+                if(options.trigger){
+                    return this.dispatch(fragment);
+                }else{
+                    return (new $.Deferred()).resolve();
+                }
+
             }
         }),
 

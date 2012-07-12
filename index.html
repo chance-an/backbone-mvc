@@ -158,6 +158,106 @@
         <section class="chapter" >
             <h3 >Features</h3 >
 
+            <h4>URL-Action Mapping</h4 >
+            <p>
+                According to Backbone's <a href="http://backbonejs.org/#Router">Router</a> component. The hash
+                fragments(#page) or a portion of the static url can be used for routing. It's the same for Backskin's
+                routing strategy. In this documentation, we will assume you use the hash fragments way.
+            </p>
+
+            <p>
+                Like CakePHP, the hash fragments are divided by slashes into <code class="term">controller name</code>,
+                <code class="term">method</code> and <code class="term">optional parameters</code> three parts.
+            </p>
+            <pre>
+ URL_TO_ROUTE := CONTROLLER_NAME '/' METHOD_NAME (ADDITIONAL_PARAMETERS)
+ ADDITIONAL_PARAMETERS := '/' LITERAL_VALUE (ADDITIONAL_PARAMETERS )
+ CONTROLLER_NAME := LITERAL_VALUE
+ METHOD_NAME : LITERAL_VALUE
+ LITERAL_VALUE: [^/]+
+            </pre>
+
+            <h5>Examples:</h5>
+            <ul>
+                <li>controller1/method1</li>
+                <li>my_controller/my-method/happy/birthday</li>
+            </ul>
+
+            <p>The optional parameters can be 0 or many, which are also separated by slash(/). No matter how many
+                parameters are in the url, they will all be tossed over to the method in the order of appearance.</p>
+<pre class="brush: javascript">
+Backskin.Controller.extend({
+    name: 'my_controller', /* the only mandatory field */
+
+    'my-method': function(how, when){
+        var phrase = how + ' ' + (when || 'unknown');
+        this._output(phrase);
+    },
+
+    _output: function(string){
+        $(&#39;#area1&#39;).append($(&#39;&lt;div&gt;&#39; + string + &#39;&lt;/div&gt;&#39;));
+    }
+})
+</pre>
+            <p>Try it in action:</p>
+            <p id="area1"></p>
+            <p>Trigger <code>my-method()</code> with 2 parameters: <br/><a
+                    href="#my_controller/my-method/happy/birthday">#my_controller/my-method/happy/birthday</a></p>
+            <p>Trigger <code>my-method()</code> with 1 parameter: <br/><a href="#my_controller/my-method/happy">#my_controller/my-method/happy</a></p>
+
+            <p>Private methods do not count. This helps protect your encapsulation.</p>
+            <p>Trigger a private method: <a href="#my_controller/_output/really?">my_controller/_output/really?</a></p>
+
+            <h4>Asynchronous Call</h4 >
+            <p>The <a href="http://backbonejs.org/#Router-navigate"><code class="term">navigate()</code></a> method
+                of  Backbone's <a href="http://backbonejs.org/#Router">Router</a> component can trigger url routing
+                programmatically. Backskin further enhances this method, and the method now returns a
+                <a href="http://api.jquery.com/category/deferred-object/">JQuery
+                Deferred object</a>. You can use it to make sure the action method has finished. This is useful when
+                it contains asynchronous calls. </p>
+
+            <p>See the following example:</p>
+<pre class="brush: javascript">
+var AsynchronousController = Backskin.Controller.extend({
+    name: 'asynchronous', /* the only mandatory field */
+
+    'method': function(){
+        var deferred = new $.Deferred();
+
+        var colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple'];
+        var index = 0;
+
+        var instance = this;
+        (function op(){
+            if(index < colors.length){
+                instance._changeColor(colors[index++]);
+                setTimeout(op, 567);
+            }else{
+                deferred.resolve();
+            }
+        })();
+        return deferred;
+    },
+
+    _changeColor: function(color){
+        $('#area2').css('background-color', color);
+    }
+});
+
+function procedure1(){
+    var r = router.navigate('asynchronous/method', {trigger:true, replace: false});
+    r.done(function(){
+        $('#area2').html('Nice I change to white!');
+        (new AsynchronousController())._changeColor('white');
+    });
+};
+</pre>
+            <p id="area2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+            <p>See it in action:</p>
+            <p>Trigger the procedure1() method: <br/><a href="javascript:procedure1();">Click here to trigger
+                procedure1()</a></p>
+
             <h4>Controllers are Singletons</h4 >
 
             <h4>Controller Inheritance</h4 >
