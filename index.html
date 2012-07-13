@@ -258,7 +258,160 @@ function procedure1(){
             <p>Trigger the procedure1() method: <br/><a href="javascript:procedure1();">Click here to trigger
                 procedure1()</a></p>
 
-            <h4>Controllers are Singletons</h4 >
+            <h4>Event Hooks</h4>
+            <p>Like CakePHP, before and after invoking an action method, <code>beforeFilter</code> and
+                <code>afterRender</code> event handlers can also be set.</p>
+            <p>For example:</p>
+ <pre class="brush: javascript">
+ Backskin.Controller.extend({
+    name: &#39;event_hooks&#39;, /* the only mandatory field */
+
+    beforeFilter: function(){
+        this._report(&#39;beforeFilter invoked&#39;);
+    },
+
+    method1: function(){
+        this._report(&#39;method1 invoked&#39;);
+    },
+
+    method2: function(){
+        var index = 0;
+        var instance = this;
+        var deferred = new $.Deferred();
+        (function op(){
+            if(index ++ &lt; 5){
+                instance._report(index);
+                setTimeout(op, 345);
+            }else{
+                deferred.resolve();
+            }
+        })();
+        return deferred;
+    },
+
+    afterRender: function(){
+        this._report(&#39;afterRender invoked&#39;);
+    },
+
+    _report: function(text){
+        $(&#39;#area3&#39;).append(&#39;&lt;div&gt;&#39; + text + &#39;&lt;/div&gt;&#39;);
+    }
+});
+ </pre>
+            <p id="area3"></p>
+            <p>Trigger <code>mehtod1()</code> <a
+                    href="#event_hooks/method1">#event_hooks/method1</a></p>
+
+            <p>If your action method return a Deferred object, then the <code>afterRender</code> event hook will be
+                deferred in execution</p>
+            <p>Trigger <code>method2()</code> <a
+                    href="#event_hooks/method2">#event_hooks/method2</a></p>
+
+            <h5>Rules for the call chain of <code>beforeFilter</code>, <code>afterRender</code> and the action method </h5>
+            <ul>
+                <li>All of the <code>beforeFilter</code>, <code>afterRender</code> and the action method can opt to return a Deferred object.
+                If either of them does, then its successor will wait on the predecessor's Deferred object.
+                Unless the Deferred object is resolved, all the subsequent methods on the chain won't be executed.</li>
+                <li>If a predecessor return a non-deferred value, and the value can be evaluated to true, the successor will run as it does normally,
+                or otherwise the call chain will be interrupted.</li>
+                <li>
+                    If a predecessor doesn't return a value, the successor will run as it does normally.
+                </li>
+                <li>If at any point, the call chain is interrupted, either by a rejected object or a false value, and the
+                    <code class="term">navigate()</code> method is used to issue the call, the returned Deferred object from
+                    <code class="term">navigate()</code> will be rejected.</li>
+            </ul>
+
+            <p>See the following example:</p>
+<div id="area4">
+<pre class="brush: javascript">
+var EventHooks1= Backskin.Controller.extend({
+    name: &#39;event_hooks1&#39;, /* the only mandatory field */
+
+    beforeFilter: function(){
+        this._report(&#39;beforeFilter invoked&#39;);
+        //always successful (can also be achieved if return nothing)
+        return true;
+    },
+
+    method1: function(){
+        this._report(&#39;method1 invoked&#39;);
+        var deferred = new $.Deferred();
+
+        var colors = [&#39;red&#39;, &#39;orange&#39;, &#39;yellow&#39;, &#39;green&#39;, &#39;cyan&#39;, &#39;blue&#39;, &#39;purple&#39;];
+        var index = 0;
+
+        var instance = this;
+        (function op(){
+            if(index &lt; colors.length){
+                instance._changeColor(colors[index++]);
+                setTimeout(op, 234);
+            }else{
+                deferred.resolve();
+            }
+        })();
+        return deferred;
+    },
+
+    method2: function(){
+        this._changeColor(&#39;MidnightBlue&#39;);
+        this._report(&#39;method2 invoked&#39;);
+        this._report(&#39;afterRender won\&#39;t be executed&#39;);
+        return false; // a false value, the subsequent method gets no chance to be executed
+    },
+
+    method3: function(){
+        this._changeColor(&#39;Indigo&#39;);
+        this._report(&#39;method3 invoked&#39;);
+        this._report(&#39;afterRender will be executed&#39;);
+        // return nothing has the same effect as returning true
+    },
+
+    afterRender: function(){
+        // reject, so the call chain will eventually fail even though the
+        // main action method is executed
+        this._report(&#39;afterRender invoked&#39;);
+        return (new $.Deferred()).reject();
+    },
+
+    _report: function(text){
+        $(&#39;#area4&#39;).append(&#39;&lt;div&gt;&#39; + text + &#39;&lt;/div&gt;&#39;);
+    },
+
+    _changeColor: function(color){
+        $(&#39;#area4&#39;).css(&#39;backgroundColor&#39;, color);
+    }
+});
+
+window[&#39;procedure2&#39;] = function(){
+    var r = router.navigate(&#39;event_hooks1/method2&#39;, {trigger:true, replace: false});
+    r.done(function(){
+        (new EventHooks1())._report(&#39;procedure2 successful&#39;);
+    }).fail(function(){
+        (new EventHooks1())._report(&#39;procedure2 failed&#39;);
+    });
+};
+
+window[&#39;procedure3&#39;] = function(){
+    var r = router.navigate(&#39;event_hooks1/method3&#39;, {trigger:true, replace: false});
+    r.done(function(){
+        (new EventHooks1())._report(&#39;procedure3 successful&#39;);
+    }).fail(function(){
+        (new EventHooks1())._report(&#39;procedure3 failed&#39;);
+    });
+};
+</pre>
+</div>
+            <p>Trigger <code>method1()</code> <a href="#event_hooks1/method1">#event_hooks1/method1</a></p>
+            <p>Trigger <code>procedure2()</code> <a href="javascript:procedure2()">procedure2()</a></p>
+            <p>Trigger <code>procedure3()</code> <a href="javascript:procedure3()">procedure3()</a></p>
+
+            <p>When used with Deferred objects, the event hooks can be useful if you want to prepare templates for your actions to render views,
+                or select the corresponding navigation entry for all the actions in the controller after their execution.</p>
+
+            <h4>Session Checking</h4>
+
+            <h4>Controllers Are Singletons</h4 >
 
             <h4>Controller Inheritance</h4 >
         </section >

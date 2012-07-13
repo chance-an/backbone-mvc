@@ -89,6 +89,9 @@
 
     $(document).ready(initialize);
 
+    /**
+     * Getting Started
+     */
     var Controller1 = Backskin.Controller.extend({
         name: 'ctrl1', /* the only mandatory field */
 
@@ -114,7 +117,9 @@
         }
     });
 
-
+    /**
+     * Action Mapping
+     */
     Backskin.Controller.extend({
         name: 'my_controller', /* the only mandatory field */
 
@@ -128,6 +133,9 @@
         }
     });
 
+    /**
+     * Asynchronouse calls
+     */
     var AsynchronousController = Backskin.Controller.extend({
         name: 'asynchronous', /* the only mandatory field */
 
@@ -159,6 +167,120 @@
         r.done(function(){
             $('#area2').html('Nice I change to white!');
             (new AsynchronousController())._changeColor('white');
+        });
+    };
+
+    /**
+     * Event hooks
+     */
+    Backskin.Controller.extend({
+        name: 'event_hooks', /* the only mandatory field */
+
+        beforeFilter: function(){
+            this._report('beforeFilter invoked');
+        },
+
+        method1: function(){
+            this._report('method1 invoked');
+        },
+
+        method2: function(){
+            var index = 0;
+            var instance = this;
+            var deferred = new $.Deferred();
+            (function op(){
+                if(index ++ < 5){
+                    instance._report(index);
+                    setTimeout(op, 345);
+                }else{
+                    deferred.resolve();
+                }
+            })();
+            return deferred;
+        },
+
+        afterRender: function(){
+            this._report('afterRender invoked');
+        },
+
+        _report: function(text){
+            $('#area3').append('<div>' + text + '</div>');
+        }
+    });
+
+    var EventHooks1= Backskin.Controller.extend({
+        name: 'event_hooks1', /* the only mandatory field */
+
+        beforeFilter: function(){
+            this._report('beforeFilter invoked');
+            //always successful (can also be achieved if return nothing)
+            return true;
+        },
+
+        method1: function(){
+            this._report('method1 invoked');
+            var deferred = new $.Deferred();
+
+            var colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple'];
+            var index = 0;
+
+            var instance = this;
+            (function op(){
+                if(index < colors.length){
+                    instance._changeColor(colors[index++]);
+                    setTimeout(op, 234);
+                }else{
+                    deferred.resolve();
+                }
+            })();
+            return deferred;
+        },
+
+        method2: function(){
+            this._changeColor('MidnightBlue');
+            this._report('method2 invoked');
+            this._report('afterRender won\'t be executed');
+            return false; // a false value, the subsequent method gets no chance to be executed
+        },
+
+        method3: function(){
+            this._changeColor('Indigo');
+            this._report('method3 invoked');
+            this._report('afterRender will be executed');
+            // return nothing has the same effect as returning true
+        },
+
+        afterRender: function(){
+            // reject, so the call chain will eventually fail even though the
+            // main action method is executed
+            this._report('afterRender invoked');
+            return (new $.Deferred()).reject();
+        },
+
+        _report: function(text){
+            $('#area4').append('<div>' + text + '</div>');
+        },
+
+        _changeColor: function(color){
+            $('#area4').css('backgroundColor', color);
+        }
+    });
+
+    window['procedure2'] = function(){
+        var r = router.navigate('event_hooks1/method2', {trigger:true, replace: false});
+        r.done(function(){
+            (new EventHooks1())._report('procedure2 successful');
+        }).fail(function(){
+            (new EventHooks1())._report('procedure2 failed');
+        });
+    };
+
+    window['procedure3'] = function(){
+        var r = router.navigate('event_hooks1/method3', {trigger:true, replace: false});
+        r.done(function(){
+            (new EventHooks1())._report('procedure3 successful');
+        }).fail(function(){
+            (new EventHooks1())._report('procedure3 failed');
         });
     };
 
