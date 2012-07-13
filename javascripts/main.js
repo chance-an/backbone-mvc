@@ -284,5 +284,49 @@
         });
     };
 
+    Backskin.Controller.extend({
+        name: 'session_enabled', /* the only mandatory field */
+
+        beforeFilter: function(){
+            this._report('beforeFilter invoked');
+            return true;
+        },
+
+        checkSession: function(){
+            this._report('checkSession invoked');
+
+            var deferred = new $.Deferred();
+
+            var instance = this;
+            setTimeout(function(){
+                instance._report('session is valid!');
+                deferred.resolve();
+            }, 2000);
+            return deferred;
+        },
+
+        user_method1: function(){
+            this._report('method1 invoked');
+        },
+
+        user_method2: function(){
+            this._report('secure method2 invoked');
+            this._changeColor('green');
+        },
+
+        method2: function(){
+            this._report('normal method2 invoked');
+            this._changeColor('DimGray');
+        },
+
+        _report: function(text){
+            $('#area5').append('<div>' + text + '</div>');
+        },
+
+        _changeColor: function(color){
+            $('#area5').css('backgroundColor', color);
+        }
+    });
+
 })();
 

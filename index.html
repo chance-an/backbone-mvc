@@ -406,15 +406,85 @@ window[&#39;procedure3&#39;] = function(){
             <p>Trigger <code>procedure2()</code> <a href="javascript:procedure2()">procedure2()</a></p>
             <p>Trigger <code>procedure3()</code> <a href="javascript:procedure3()">procedure3()</a></p>
 
-            <p>When used with Deferred objects, the event hooks can be useful if you want to prepare templates for your actions to render views,
-                or select the corresponding navigation entry for all the actions in the controller after their execution.</p>
+            <p>When used with Deferred objects, the event hooks can be useful if you want to prepare templates for your
+                actions to render views, or select the corresponding navigation entry for all the actions in the
+                controller after their execution.</p>
 
             <h4>Session Checking</h4>
+
+            <p>Similar to <code class="term">beforeFilter</code> and <code class="term">afterRender</code> methods, you can
+            also define a <code class="term">checkSession</code> method. Then all action methods with a prefix of 'user_' in their
+            names, will be invoked only after the <code class="term">checkSession</code> is called.</p>
+
+            <p>If <code class="term">checkSession</code> returns false or a Deferred object, which will later be rejected,
+            the action methods will not be invoked.</p>
+
+            <p>See example:</p>
+<pre class="brush: javascript">
+Backskin.Controller.extend({
+    name: &#39;session_enabled&#39;, /* the only mandatory field */
+
+    beforeFilter: function(){
+        this._report(&#39;beforeFilter invoked&#39;);
+        return true;
+    },
+
+    checkSession: function(){
+        this._report(&#39;checkSession invoked&#39;);
+
+        var deferred = new $.Deferred();
+
+        var instance = this;
+        setTimeout(function(){
+            instance._report(&#39;session is valid!&#39;);
+            deferred.resolve();
+        }, 2000);
+        return deferred;
+    },
+
+    user_method1: function(){
+        this._report(&#39;method1 invoked&#39;);
+    },
+
+    user_method2: function(){
+        this._report(&#39;secure method2 invoked&#39;);
+        this._changeColor(&#39;green&#39;);
+    },
+
+    method2: function(){
+        this._report(&#39;normal method2 invoked&#39;);
+        this._changeColor(&#39;DimGray&#39;);
+    },
+
+    _report: function(text){
+        $(&#39;#area5&#39;).append(&#39;&lt;div&gt;&#39; + text + &#39;&lt;/div&gt;&#39;);
+    },
+
+    _changeColor: function(color){
+        $(&#39;#area5&#39;).css(&#39;backgroundColor&#39;, color);
+    }
+});
+</pre>
+            <p id="area5"></p>
+            <p>Trigger <code>user_method1()</code> <a href="#session_enabled/user_method1">#session_enabled/user_method1</a></p>
+
+            <p>You can even omit the 'user_' prefix:</p>
+            <p>Trigger <code>method1()</code> <a href="#session_enabled/method1">#session_enabled/method1</a></p>
+
+            <p>However if the method without the 'user_' prefix is already defined, then the shortcut will not overwrite the existing one,
+            see example:</p>
+
+            <p>Trigger <code>user_method2()</code> <a href="#session_enabled/user_method2">#session_enabled/user_method2</a></p>
+            <p>Trigger <code>method2()</code> <a href="#session_enabled/method2">#session_enabled/method2</a></p>
+
+            <p>As you can see, the <code class="term">checkSession</code> is invoked after <code class="term">beforeFilter</code>, but before
+            the action method.</p>
+
 
             <h4>Controllers Are Singletons</h4 >
 
             <h4>Controller Inheritance</h4 >
-        </section >
+        </section>
 
 
         <!--<h3 >Authors and Contributors</h3 >-->
