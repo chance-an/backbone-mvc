@@ -3,9 +3,11 @@
     function initialize(){
         setupSyntaxHighlighter();
         setupCodeAreaAction();
+        setupNavigation();
 
         router = new Backskin.Router(); //please use the new automatic router
         Backbone.history.start(); //please still call Backbone's facility here
+
     }
 
     function setupSyntaxHighlighter(){
@@ -85,6 +87,36 @@
             })) ;
         }
     }
+
+    function setupNavigation(){
+        var $element = $('#primary_nav');
+        var elemTop = $element.offset().top;
+        var elemBottom = elemTop + $element.height();
+
+        function _checkPosition(){
+            var docViewTop = $(window).scrollTop();
+            var docViewBottom = docViewTop + $(window).height();
+
+            if( docViewTop > elemBottom){
+                if(!$element.hasClass('float')){
+                    $element.addClass('float');
+                }
+            }else{
+                if($element.hasClass('float')){
+                    $element.removeClass('float');
+                }
+            }
+
+        }
+
+        $(window).on('scroll', _checkPosition);
+
+//        $('#primary_nav .subnav').scrollspy()
+        $('body').scrollspy({
+            offset: 37.6667
+        })
+    }
+
 
 
     $(document).ready(initialize);
@@ -284,6 +316,9 @@
         });
     };
 
+    /**
+     * Session checking
+     */
     Backskin.Controller.extend({
         name: 'session_enabled', /* the only mandatory field */
 
@@ -326,6 +361,63 @@
         _changeColor: function(color){
             $('#area5').css('backgroundColor', color);
         }
+    });
+
+    /**
+     * Singleton
+     * @type {*}
+     */
+    var Singleton = Backskin.Controller.extend({
+        name: 'singleton', /* the only mandatory field */
+        value: 0,
+
+        method: function(){
+            this._report(this.value++);
+        },
+
+        _report: function(text){
+            $('#area6').append('<div>' + text + '</div>');
+        }
+    });
+
+    window['procedure4'] = function(){
+        (new Singleton()).method();
+    };
+
+    /**
+     * Inheritance
+     */
+    var Parent = Backskin.Controller.extend({
+        name: 'parent', /* the only mandatory field, even though the parent is not planned to be used,
+        it still need to be granted a name. */
+
+        method: function(){
+            this._report('Parent method invoked');
+            this._changeColor('#141F2E');
+        },
+
+        _report: function(text){
+            $('#area7').append('<div>' + text + '</div>');
+        },
+
+        _changeColor: function(color){
+            $('#area7').css('backgroundColor', color);
+        }
+    });
+
+    var Child1 = Parent.extend({
+        name: 'child1', /* the only mandatory field */
+
+        method: function(){
+            this._report('Child1 method invoked');
+            this._changeColor('green');
+        }
+    });
+
+    var Child2 = Parent.extend({
+        name: 'child2' /* the only mandatory field */
+
+        //this controller doesn't implement anything, so its parent's methods will be passed over.
     });
 
 })();

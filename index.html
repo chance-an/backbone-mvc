@@ -12,22 +12,24 @@
     <script type="text/javascript" src="javascripts/SyntaxHighlighter/shCore.js"></script>
     <script type="text/javascript" src="javascripts/SyntaxHighlighter/shAutoloader.js"></script>
     <script src="javascripts/backbone-mvc.js" type="text/javascript" language="JavaScript"></script>
+    <script src="javascripts/bootstrap.min.js" type="text/javascript" language="JavaScript"></script>
     <script src="javascripts/main.js" type="text/javascript" language="JavaScript"></script>
 
     <link type="text/css" rel="stylesheet" href="stylesheets/SyntaxHighlighter/shCoreRDark.css"/>
     <link type="text/css" rel="Stylesheet" href="stylesheets/SyntaxHighlighter/shThemeRDark.css" />
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css" media="screen" />
     <!--<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />-->
 
     <title >Backskin : Add Controllers to Backbone.js</title >
 </head >
 
+<!--<body data-spy="scroll" >-->
 <body >
 
 <header >
-    <div class="container" >
+    <div id="title" class="container" >
         <h1 >Backskin</h1 >
-
         <h2 ></h2 >
 
         <section id="downloads" >
@@ -37,11 +39,22 @@
                 GitHub</a >
         </section >
     </div >
+    <div id="primary_nav" >
+        <div class="subnav">
+            <ul class="nav nav-pills">
+                <li class=""><a href="#title">Title</a></li>
+                <li class=""><a href="#introduction">Introduction</a></li>
+                <li class=""><a href="#getting-started">Getting started</a></li>
+                <li class=""><a href="#features">Features</a></li>
+                <li class=""><a href="#support-or-contact">Support or Contact</a></li>
+            </ul>
+        </div>
+    </div>
 </header >
 
 <div class="container" >
     <section id="main_content" >
-        <section class="chapter" >
+        <section >
             <p >Backskin adds the missing Controller components into your project if you also use
                 <a href="http://github.com/documentcloud/backbone/" >Backbone.js</a >, so now you have a complete MVC
                 framework. Like
@@ -50,7 +63,7 @@
             </p >
         </section >
 
-        <section class="chapter" >
+        <section id="introduction" class="chapter" >
             <h3 >Introduction</h3 >
 
             <p >Backbone.js does an excellent job of keeping data in sync between the HTML UI and your Javascript logic.
@@ -79,7 +92,7 @@
                 many conveniences. So it becomes very practical and useful.</p>
         </section >
 
-        <section class="chapter" >
+        <section id="getting-started" class="chapter" >
             <h3 >Getting started</h3 >
 
             <p >Backskin depends on some other libraries. Before importing it, JQuery, Underscore and Backbone.js must also be imported.</p >
@@ -155,7 +168,7 @@
         </ul>
         </section >
 
-        <section class="chapter" >
+        <section id="features" class="chapter" >
             <h3 >Features</h3 >
 
             <h4>URL-Action Mapping</h4 >
@@ -483,26 +496,79 @@ Backskin.Controller.extend({
 
             <h4>Controllers Are Singletons</h4 >
 
+            <p>Controllers are all singletons. So no matter when and where you instantiate a controller, the instance always keeps the same state.</p>
+            <div id="area6">
+<pre class="brush: javascript">
+var Singleton = Backskin.Controller.extend({
+    name: 'singleton', /* the only mandatory field */
+    value: 0,
+
+    method: function(){
+        this._report(this.value++);
+    },
+
+    _report: function(text){
+        $('#area6').append('<div>' + text + '</div>');
+    }
+});
+
+window['procedure4'] = function(){
+    (new Singleton()).method();
+};
+</pre>
+            </div>
+            <p>Trigger <code>method()</code> <a href="#singleton/method">#singleton/method</a></p>
+            <p>Call <code>procedure4()</code> <a href="javascript:procedure4()">procedure4()</a></p>
             <h4>Controller Inheritance</h4 >
+            <p><code>Controller.extend()</code> can be used to do class inheritance. So your controllers are able to share
+            functionality from their parent controller.</p>
+            <p>See example:</p>
+            <div id="area7">
+<pre class="brush: javascript">
+var Parent = Backskin.Controller.extend({
+    name: &#39;parent&#39;, /* the only mandatory field, even though the parent is not planned to be used,
+    it still need to be granted a name. */
+
+    method: function(){
+        this._report(&#39;Parent method invoked&#39;);
+        this._changeColor(&#39;#141F2E&#39;);
+    },
+
+    _report: function(text){
+        $(&#39;#area7&#39;).append(&#39;&lt;div&gt;&#39; + text + &#39;&lt;/div&gt;&#39;);
+    },
+
+    _changeColor: function(color){
+        $(&#39;#area7&#39;).css(&#39;backgroundColor&#39;, color);
+    }
+});
+
+var Child1 = Parent.extend({
+    name: &#39;child1&#39;, /* the only mandatory field */
+
+    method: function(){
+        this._report(&#39;Child1 method invoked&#39;);
+        this._changeColor(&#39;green&#39;);
+    }
+});
+
+var Child2 = Parent.extend({
+    name: &#39;child2&#39; /* the only mandatory field */
+
+    //this controller doesn&#39;t implement anything, so its parent&#39;s methods will be passed over.
+});
+</pre>
+            </div>
+            <p>Trigger <code>Child1::method()</code> <a href="#child1/method">#child1/method</a></p>
+            <p>Trigger <code>Child2::method()</code> <a href="#child2/method">#child2/method</a></p>
         </section>
 
 
-        <!--<h3 >Authors and Contributors</h3 >-->
-
-        <!--<p >You can <a href="https://github.com/blog/821" class="user-mention" >@mention</a > a GitHub username to-->
-            <!--generate-->
-            <!--a link to their profile. The resulting <code >&lt;a&gt;</code > element will link to the contributor's-->
-            <!--GitHub-->
-            <!--Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention" >@defunkt</a >),-->
-            <!--PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention" >@pjhyett</a >), and Tom Preston-Werner-->
-            <!--(<a href="https://github.com/mojombo" class="user-mention" >@mojombo</a >) founded GitHub.-->
-        <!--</p >-->
-
-        <h3 >Support or Contact</h3 >
-        <p>Have questions or suggestions? Please contact <a href="https://github.com/chance-an">Changsi An</a> by me@anchangsi.com .</p>
-        <!--<p >Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages" >http://help.github.com/pages</a >-->
-            <!--or contact <a href="mailto:support@github.com" >support@github.com</a > and we’ll help you sort it out.-->
-        <!--</p >-->
+        <section id="support-or-contact" class="chapter">
+            <h3 >Support or Contact</h3 >
+            <p>Have questions or suggestions? Please contact <a href="https://github.com/chance-an">Changsi An</a> by me@anchangsi.com .</p>
+            <p>Copyright 2012 Changsi An</p>
+        </section>
     </section >
 </div >
 
