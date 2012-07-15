@@ -306,7 +306,7 @@ p[id^="area"]{
     color: #FF8080;;
 }
 
-.subnav{
+.subnav, #sidebar{
     overflow: auto;
     display: table;
     width: auto;
@@ -324,28 +324,54 @@ p[id^="area"]{
     height: 36px;
 }
 
-.subnav .nav > .active > a, .subnav .nav > .active > a:hover {
+#sidebar .nav > li > a{
+    border: 0 solid #393939;
+    border-top: 2px #151515;
+    border-bottom-width: 1px;
+    background-color: #151515;
+    background-image: -moz-linear-gradient(top, #393939 0%, #151515 100%); /* FF3.6+ */
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#393939), color-stop(100%,#151515)); /* Chrome,Safari4+ */
+    background-image: -webkit-linear-gradient(top, #393939 0%,#151515 100%); /* Chrome 10+,Safari 5.1+ */
+    background-image: -ms-linear-gradient(top, #393939 0%,#151515 100%); /* IE10+ */
+    background-image: -o-linear-gradient(top, #393939 0%,#151515 100%); /* Opera 11.10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#393939', endColorstr='#151515',GradientType=0 ); /* IE6-9 */
+    background-image: linear-gradient(top, #393939 0%,#151515 100%); /* W3C */
+}
+
+.subnav .nav > .active > a, .subnav .nav > .active > a:hover, #sidebar .nav > li.active > a, #sidebar .nav > li.active > a:hover{
     background-color: #B5E853;
     border-left: 0 none;
     border-right-color: #DDDDDD;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05) inset;
     color: #151515;
     padding-left: 13px;
+    background-image: -moz-linear-gradient(top, #B5E853 0%, #A2D04A 100%); /* FF3.6+ */
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#B5E853), color-stop(100%,#A2D04A)); /* Chrome,Safari4+ */
+    background-image: -webkit-linear-gradient(top, #B5E853 0%,#A2D04A 100%); /* Chrome 10+,Safari 5.1+ */
+    background-image: -ms-linear-gradient(top, #B5E853 0%,#A2D04A 100%); /* IE10+ */
+    background-image: -o-linear-gradient(top, #B5E853 0%,#A2D04A 100%); /* Opera 11.10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B5E853', endColorstr='#A2D04A',GradientType=0 ); /* IE6-9 */
+    background-image: linear-gradient(top, #B5E853 0%,#A2D04A 100%); /* W3C */
 }
 
-.subnav .nav > li > a {
-    border-left: 1px solid #393939;
+.subnav .nav > li > a, #sidebar .nav > li > a {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
-    border-right: 1px solid #151515;
     margin: 0;
     padding-bottom: 11px;
     padding-top: 11px;
     text-decoration: none;
+
 }
 
-.subnav .nav > li > a:hover {
+.subnav .nav > li > a{
+    border-left: 1px solid #393939;
+    border-right: 1px solid #151515;
+}
+
+
+.subnav .nav > li > a:hover, #sidebar .nav > li > a:hover {
     background-image: -moz-linear-gradient(top, #A2D04A 0%, #9DCA48 100%); /* FF3.6+ */
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#A2D04A), color-stop(100%,#9DCA48)); /* Chrome,Safari4+ */
     background-image: -webkit-linear-gradient(top, #A2D04A 0%,#9DCA48 100%); /* Chrome 10+,Safari 5.1+ */
@@ -368,7 +394,7 @@ p[id^="area"]{
     border-radius: 0px 4px 4px 0px;
 }
 
-.subnav ul{
+.subnav ul, #sidebar ul{
     margin: 0 auto;
     width: auto;
     padding: 0;
@@ -376,9 +402,13 @@ p[id^="area"]{
     position: relative;
 }
 
-.subnav ul li:before{
+.subnav ul li:before,  #sidebar .nav > li:before {
     content: "";
     margin: auto;
+}
+
+#sidebar .nav > li.nav-header{
+    font-size: 1.2em;
 }
 
 .float .subnav{
@@ -395,9 +425,30 @@ p[id^="area"]{
     z-index: 1020;
     width: 100%;
     border-width: 0 0 1px;
-    /*box-shadow: 0 1px 0 #FFFFFF inset, 0 1px 5px rgba(0, 0, 0, 0.1);*/
 
     -moz-box-shadow:  0px 0px 10px 3px rgba(181, 232, 83, 0.3);
     -webkit-box-shadow:  0px 0px 10px 3px rgba(181, 232, 83, 0.3);
     box-shadow:  0px 0px 10px 3px rgba(181, 232, 83, 0.3);
+}
+
+#sidebar{
+    display: none;
+    position: fixed;
+    left: 0;
+    z-index: 1020;
+    border-width: 0 1px 0 0;
+
+    -moz-box-shadow:  0px 0px 10px 3px rgba(181, 232, 83, 0.3);
+    -webkit-box-shadow:  0px 0px 10px 3px rgba(181, 232, 83, 0.3);
+    box-shadow:  0px 0px 10px 3px rgba(181, 232, 83, 0.3);
+
+}
+#sidebar.active{
+    display: table;
+}
+
+#sidebar .nav{
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
 }

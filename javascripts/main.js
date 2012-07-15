@@ -4,6 +4,7 @@
         setupSyntaxHighlighter();
         setupCodeAreaAction();
         setupNavigation();
+        setupVerticalNavigation();
 
         router = new Backskin.Router(); //please use the new automatic router
         Backbone.history.start(); //please still call Backbone's facility here
@@ -111,13 +112,93 @@
 
         $(window).on('scroll', _checkPosition);
 
-//        $('#primary_nav .subnav').scrollspy()
         $('body').scrollspy({
             offset: 37.6667
         })
     }
 
+    function setupVerticalNavigation(){
+        function updateSideBar(){
+            var $element = $('#sidebar');
+            var primaryNavHeight = $('#primary_nav').height() + 1;
+            $element.css('top', primaryNavHeight);
+            $element.css('height', $(window).height() - primaryNavHeight);
 
+            $element = $('#sidebar .nav');
+            $element.css('marginTop', - $element.height() / 2 );
+            $('#sidebar').css('width', $element.width() );
+        }
+
+        function _checkVisible($element){
+            var docViewTop = $(window).scrollTop();
+            var docViewBottom = docViewTop + $(window).height();
+
+            var elemTop = $element.offset().top;
+            var elemBottom = elemTop + $element.height();
+
+            return (docViewTop > elemTop && docViewTop < elemBottom) ||
+                (docViewBottom > elemTop && docViewBottom < elemBottom) ;
+        }
+
+        function showHideSideBar(){
+            if(_checkVisible($('#features'))) {
+                $('#sidebar').addClass('active');
+                updateSideBar();
+            }else{
+                $('#sidebar').removeClass('active');
+            }
+        }
+        updateSideBar();
+
+        function updateSideBarNavigation(){
+            var positions = $('#features h4').map(function(i, e){
+                return $(e).offset().top;
+            });
+
+            var docViewTop = $(window).scrollTop();
+            var docViewBottom = docViewTop + $(window).height();
+            var docViewCenter = (docViewBottom + docViewTop) / 2;
+
+            var index = -1;
+
+            for(var i = 0; i < positions.length; i++){
+                if(docViewCenter > positions[i]){
+                    index ++;
+                }else{
+                    break;
+                }
+            }
+
+            var $all = $('li.features-item');
+            $all.removeClass('active');
+            if(index > -1 && index < positions.length){
+
+                $($all[index]).addClass('active');
+            }
+        }
+
+        //bind navigation events
+        $('li.features-item').each(function(i, e){
+            $(e).on('click',(function(i){
+                return function(){
+                    var headerNavHeight = $('#primary_nav').height() + 1;
+                    var positions = $('#features h4').map(function(i, e){
+                        return $(e).offset().top - headerNavHeight;
+                    });
+
+                    var $all = $('li.features-item');
+                    $all.removeClass('active');
+                    $($all[i]).addClass('active');
+                    $(window).scrollTop(positions[i]);
+                };
+            })(i));
+        });
+
+        $(window).on('resize', updateSideBar);
+        $(window).on('scroll', showHideSideBar);
+        $(window).on('scroll', updateSideBarNavigation);
+
+    }
 
     $(document).ready(initialize);
 
