@@ -1,5 +1,24 @@
+//Copyright 2012 Changsi An
+
+//This file is part of Backbone-MVC.
+//
+//Backbone-MVC is free software: you can redistribute it and/or modify
+//it under the terms of the GNU Lesser General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+//
+//Backbone-MVC is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public License
+//along with Backbone-MVC.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+//Quick Start
+//
 //This software requires Backbone.js and Underscore.js to work correctly.
-//Author: Changsi An anchangsi@gmail.com
 
 (function(){
     var PRODUCT_NAME = 'Backskin'; //Don't like the name? Help yourself.
