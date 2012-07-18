@@ -14,21 +14,51 @@
 //
 //You should have received a copy of the GNU Lesser General Public License
 //along with Backbone-MVC.  If not, see <http://www.gnu.org/licenses/>.
-//
-//
+//--------------------------------------------------------------------------------------
 //Quick Start
 //
 //This software requires Backbone.js and Underscore.js to work correctly.
+//
+//Usage:
+//To create a controller, use :
+/*
+BackboneMVC.Controller.extend({
+    name: 'controller1', //mandatory field
 
+    //defined once, will be invoked before each action method
+    beforeFilter: function(){},
+
+    //defined once, will be invoked after each action method
+    afterRender: function(){},
+
+    //used with secure methods, expect true/false or Deferred Object.
+    checkSession: function(){},
+
+    //action method
+    action1: function(){
+        this._privateMethod("Hello");
+    },
+
+    //secure method, checkSession method will be invoked first
+    user_action2: function(){},
+
+    //a private method start with _
+    _privateMethod: function(message){
+        alert(message);
+    }
+})
+*/
+
+//--------------------------------------------------------------------------------------
 (function(){
-    var PRODUCT_NAME = 'Backskin'; //Don't like the name? Help yourself.
+    var PRODUCT_NAME = 'BackboneMVC';
 
     //check prerequisites
     if(typeof Backbone === 'undefined' || typeof _ === 'undefined'){
         return;
     }
 
-    var Backskin = window[PRODUCT_NAME] = {};
+    var BackboneMVC = window[PRODUCT_NAME] = {};
 
     var ControllerSingleton = (function(){
         function BaseController(){
@@ -64,7 +94,7 @@
         return BaseController;
     })();
 
-    _.extend(Backskin, {
+    _.extend(BackboneMVC, {
         namespace: function(namespaceString){
             var components = namespaceString.split('.');
             var node = window;
@@ -198,7 +228,8 @@
         }
     });
 
-    Backskin.Controller.extend = _extendMethodGenerator(Backskin.Controller, {});
+    //_extendMethodGenerator is used to create a closure that can store
+    BackboneMVC.Controller.extend = _extendMethodGenerator(BackboneMVC.Controller, {});
 
     //internal variables
     var ControllersPool = {};
@@ -223,7 +254,7 @@
             properties = _.extend({}, _inheritedMethodsDefinition, properties);
 
             //special handling of method override in inheritance
-            var tmpControllerProperties = _.extend({}, Backskin.Controller);
+            var tmpControllerProperties = _.extend({}, BackboneMVC.Controller);
 
             var actionMethods = {}, secureActions = {};
             _.each(properties, function(value, propertyName){
