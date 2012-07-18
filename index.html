@@ -21,7 +21,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css" media="screen" />
     <!--<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />-->
 
-    <title >Backskin : Add Controllers to Backbone.js</title >
+    <title >BackboneMVC : Add Controllers to Backbone.js</title >
 </head >
 
 <!--<body data-spy="scroll" >-->
@@ -29,13 +29,13 @@
 
 <header >
     <div id="title" class="container" >
-        <h1 >Backskin</h1 >
+        <h1 >BackboneMVC</h1 >
         <h2 ></h2 >
 
         <section id="downloads" >
-            <a href="https://raw.github.com/chance-an/backskin/master/backbone-mvc.js" class="btn" >Download
+            <a href="https://raw.github.com/chance-an/BackboneMVC/master/backbone-mvc.js" class="btn" >Download
                 backbone-mvc.js</a >
-            <a href="https://github.com/chance-an/backskin" class="btn btn-github" ><span class="icon" ></span >View on
+            <a href="https://github.com/chance-an/BackboneMVC" class="btn btn-github" ><span class="icon" ></span >View on
                 GitHub</a >
         </section >
     </div >
@@ -66,7 +66,7 @@
 <div class="container" >
     <section id="main_content" >
         <section >
-            <p >Backskin adds the missing Controller components into your project if you also use
+            <p >BackboneMVC adds the missing Controller components into your project if you also use
                 <a href="http://github.com/documentcloud/backbone/" >Backbone.js</a >, so now you have a complete MVC
                 framework. Like
                 <a href="http://cakephp.org/" >CakePHP</a >, it automatically routes your urls to the correct controller
@@ -92,22 +92,22 @@
                 It will become even verbose if your application has a lot asynchronous calls.
             </p >
             <p>
-                Backskin is designed just to address these issues.
+                BackboneMVC is designed just to address these issues.
             </p>
-            <p >Now you don't have to worry about the Router. Backskin takes care of the chores for you and provides you the
+            <p >Now you don't have to worry about the Router. BackboneMVC takes care of the chores for you and provides you the
                 Controllers you have longed. Just define the Controllers and it starts to work automatically. You also get
                 the functionality of automatic session checking and event hooks like 'beforeFilter' and 'afterRender'.
                 There are also some utilities provided as well.
             </p >
-            <p> Backskin doesn't accomplish what Backbone cannot achieve, but it makes many tasks easier by providing
+            <p> BackboneMVC doesn't accomplish what Backbone cannot achieve, but it makes many tasks easier by providing
                 many conveniences. So it becomes very practical and useful.</p>
         </section >
 
         <section id="getting-started" class="chapter" >
             <h3 >Getting started</h3 >
 
-            <p >Backskin depends on some other libraries. Before importing it, JQuery, Underscore and Backbone.js must also be imported.</p >
-            <p >The source code file for Backskin is currently called <a href="https://raw.github.com/chance-an/backskin/master/backbone-mvc.js">backbone-mvc.js</a></p >
+            <p >BackboneMVC depends on some other libraries. Before importing it, JQuery, Underscore and Backbone.js must also be imported.</p >
+            <p >The source code file for BackboneMVC is currently called <a href="https://raw.github.com/chance-an/BackboneMVC/master/backbone-mvc.js">backbone-mvc.js</a></p >
 <pre class="brush: html">
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -122,9 +122,9 @@
 &lt;/html&gt;
 </pre >
        <p>Then you can start to define your controllers. It follows the same syntax as you define Model and View. To define a <code>Controller</code>,
-           use <code>Backskin.Controler.extend(properties)</code> method :</p>
+           use <code>BackboneMVC.Controler.extend(properties)</code> method :</p>
 <pre class="brush: javascript">
-    var Controller1 = Backskin.Controller.extend({
+    var Controller1 = BackboneMVC.Controller.extend({
         name: 'ctrl1', /* the only mandatory field */
 
         /**
@@ -157,13 +157,13 @@
                 are private methods, which will be disregarded by the router.</li>
         </ul>
 
-        <p>The last step is to create <strong class="blue">Backskin</strong>'s router instance, and start the
+        <p>The last step is to create <strong class="blue">BackboneMVC</strong>'s router instance, and start the
             <strong class="red">Backbone</strong>'s <a href="http://backbonejs.org/#History">History</a> component, so the
         routing mechanism will take effect.</p>
 
 <pre class="brush: javascript">
 
-    var router = new Backskin.Router(); //please use the new automatic router
+    var router = new BackboneMVC.Router(); //please use the new automatic router
     Backbone.history.start(); //please still call Backbone's facility here
 
 </pre>
@@ -185,7 +185,7 @@
             <h4>URL-Action Mapping</h4 >
             <p>
                 According to Backbone's <a href="http://backbonejs.org/#Router">Router</a> component. The hash
-                fragments(#page) or a portion of the static url can be used for routing. It's the same for Backskin's
+                fragments(#page) or a portion of the static url can be used for routing. It's the same for BackboneMVC's
                 routing strategy. In this documentation, we will assume you use the hash fragments way.
             </p>
 
@@ -210,7 +210,7 @@
             <p>The optional parameters can be 0 or many, which are also separated by slash(/). No matter how many
                 parameters are in the url, they will all be tossed over to the method in the order of appearance.</p>
 <pre class="brush: javascript">
-Backskin.Controller.extend({
+BackboneMVC.Controller.extend({
     name: 'my_controller', /* the only mandatory field */
 
     'my-method': function(how, when){
@@ -235,14 +235,14 @@ Backskin.Controller.extend({
             <h4>Asynchronous Call</h4 >
             <p>The <a href="http://backbonejs.org/#Router-navigate"><code class="term">navigate()</code></a> method
                 of  Backbone's <a href="http://backbonejs.org/#Router">Router</a> component can trigger url routing
-                programmatically. Backskin further enhances this method, and the method now returns a
+                programmatically. BackboneMVC further enhances this method, and the method now returns a
                 <a href="http://api.jquery.com/category/deferred-object/">JQuery
                 Deferred object</a>. You can use it to make sure the action method has finished. This is useful when
                 it contains asynchronous calls. </p>
 
             <p>See the following example:</p>
 <pre class="brush: javascript">
-var AsynchronousController = Backskin.Controller.extend({
+var AsynchronousController = BackboneMVC.Controller.extend({
     name: 'asynchronous', /* the only mandatory field */
 
     'method': function(){
@@ -287,7 +287,7 @@ function procedure1(){
                 <code>afterRender</code> event handlers can also be set.</p>
             <p>For example:</p>
  <pre class="brush: javascript">
- Backskin.Controller.extend({
+ BackboneMVC.Controller.extend({
     name: &#39;event_hooks&#39;, /* the only mandatory field */
 
     beforeFilter: function(){
@@ -349,7 +349,7 @@ function procedure1(){
             <p>See the following example:</p>
 <div id="area4">
 <pre class="brush: javascript">
-var EventHooks1= Backskin.Controller.extend({
+var EventHooks1= BackboneMVC.Controller.extend({
     name: &#39;event_hooks1&#39;, /* the only mandatory field */
 
     beforeFilter: function(){
@@ -445,7 +445,7 @@ window[&#39;procedure3&#39;] = function(){
 
             <p>See example:</p>
 <pre class="brush: javascript">
-Backskin.Controller.extend({
+BackboneMVC.Controller.extend({
     name: &#39;session_enabled&#39;, /* the only mandatory field */
 
     beforeFilter: function(){
@@ -510,7 +510,7 @@ Backskin.Controller.extend({
             <p>Controllers are all singletons. So no matter when and where you instantiate a controller, the instance always keeps the same state.</p>
             <div id="area6">
 <pre class="brush: javascript">
-var Singleton = Backskin.Controller.extend({
+var Singleton = BackboneMVC.Controller.extend({
     name: 'singleton', /* the only mandatory field */
     value: 0,
 
@@ -536,7 +536,7 @@ window['procedure4'] = function(){
             <p>See example:</p>
             <div id="area7">
 <pre class="brush: javascript">
-var Parent = Backskin.Controller.extend({
+var Parent = BackboneMVC.Controller.extend({
     name: &#39;parent&#39;, /* the only mandatory field, even though the parent is not planned to be used,
     it still need to be granted a name. */
 
