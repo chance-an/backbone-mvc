@@ -7,9 +7,9 @@
     <script type="text/javascript" language="JavaScript" src="../backbone-mvc.js"></script>
     <script type="text/javascript" language="JavaScript" >
 
-        Backskin.namespace('MyApp.Controllers');
+        BackboneMVC.namespace('MyApp.Controllers');
 
-        MyApp.Controllers.DashboardController = Backskin.Controller.extend({
+        MyApp.Controllers.DashboardController = BackboneMVC.Controller.extend({
             name: 'dashboard', /* the only mandatory field */
 
             /**
@@ -28,8 +28,12 @@
             }
         });
 
-        MyApp.Controllers.ArticlesController = Backskin.Controller.extend({
+        MyApp.Controllers.ArticlesController = BackboneMVC.Controller.extend({
             name: 'articles', /* the only mandatory field */
+
+            checkSessionValid : function(){
+                return true;
+            },
 
             /**
              * This is am action method which is invoked only after session checking
@@ -46,7 +50,7 @@
             }
         });
 
-        MyApp.Controllers.AdminController = Backskin.Controller.extend({
+        MyApp.Controllers.AdminController = BackboneMVC.Controller.extend({
             name: 'admin', /* the only mandatory field */
 
             checkSessionValid : function(){
@@ -60,7 +64,6 @@
 
             },
 
-
             /**
              * This function will remain untouched, the router cannot see this method
              */
@@ -69,12 +72,12 @@
             }
         });
 
-        var router = new Backskin.Router(); //please use the new automatic router
+        var router = new BackboneMVC.Router(); //please use the new automatic router
         Backbone.history.start(); //please still call Backbone's facility here
 
 
     </script>
-    <title>Backskin Example</title>
+    <title>BackboneMVC Example</title>
 </head>
 <body>
 
