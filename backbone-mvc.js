@@ -55,6 +55,7 @@
 
 //------------------------------------------------------------------------------
 (function () {
+    'use strict';
     var PRODUCT_NAME = 'BackboneMVC';
 
     //check prerequisites
@@ -89,7 +90,7 @@
         });
 
         BaseController.extend = function (properties) {
-            var instance = undefined;
+            var instance;
             var klass = function Controller() {
                 if (instance !== undefined) { //try to simulate Singleton
                     return instance;
@@ -98,8 +99,8 @@
 
                 //'initialize()' method works as explicit constructor, if it is defined,
                 // then run it
-                if (this['initialize'] !== undefined) {
-                    this['initialize'].apply(this, arguments);
+                if (this.initialize !== undefined) {
+                    this.initialize.apply(this, arguments);
                 }
 
                 instance = this;
@@ -115,7 +116,7 @@
             return klass;
         };
         return BaseController;
-    })();
+    }());
 
     _.extend(BackboneMVC, {
         /**
@@ -174,7 +175,7 @@
 
             dispatch:function (actionPath) {
                 var components = actionPath.replace(/\/+$/g, '').split('/');
-                var controllerName = undefined;
+                var controllerName;
 
                 //look for controllers
                 if (ControllersPool[components[0]]) {
@@ -186,11 +187,11 @@
                 }
 
                 //test if the controller exists, if not, return a deferred object and reject it.
-                if (typeof controllerName == 'undefined') {
+                if (typeof controllerName === 'undefined') {
                     return this['404'](); //no such controller, reject
                 }
 
-                var controller = new ControllersPool[controllerName];
+                var controller = new ControllersPool[controllerName]();
                 //if the action is omitted, it is 'default'.
                 var action = components.length > 1 ? components[1] : 'default';
 
@@ -240,7 +241,9 @@
                         //by taking over the '__fetchSuccessCallback()' defined in 'parse()'
                         var success = options.success;
                         options.success = function (model, resp) {
-                            if (success) success(model, resp);
+                            if (success) {
+                                success(model, resp);
+                            }
                             if (model.__fetchSuccessCallback) {
                                 var tmp = model.__fetchSuccessCallback;
                                 model.__fetchSuccessCallback = null; //remove the temporary method after use
@@ -251,7 +254,9 @@
                         //by taking over the '__fetchErrorCallback()' defined in 'parse()'
                         var error = options.error;
                         options.error = function (model, resp) {
-                            if (error) error(model, resp);
+                            if (error){
+                                error(model, resp);
+                            }
                             if (model.__fetchErrorCallback) {
                                 var tmp = model.__fetchErrorCallback;
                                 model.__fetchErrorCallback = null; //remove the temporary method after use
@@ -310,7 +315,7 @@
     function _extendMethodGenerator(klass, _inheritedMethodsDefinition) {
         //create closure
         return function (properties) {
-            var name = properties['name'];
+            var name = properties.name;
             if (typeof name === 'undefined') {
                 throw '\'name\' property is mandatory ';
             }
@@ -326,8 +331,8 @@
             _.each(properties, function (value, propertyName) {
                 tmpControllerProperties[propertyName] = value; // transfer the property, which will be later
                 //filter the non-action methods
-                if (typeof value !== 'function' || propertyName[0] === '_'
-                    || _.indexOf(systemActions, propertyName) >= 0) {
+                if (typeof value !== 'function' || propertyName[0] === '_' ||
+                    _.indexOf(systemActions, propertyName) >= 0) {
                     return false;
                 }
 
@@ -353,7 +358,7 @@
             });
             //remove the extend method if there is one, so it doesn't stay in the property history
             if ('extend' in tmpControllerProperties) {
-                delete tmpControllerProperties['extend'];
+                delete tmpControllerProperties.extend;
             }
             //get around of singleton inheritance issue by using mixin
             var _controllerClass = ControllerSingleton.extend(tmpControllerProperties);
@@ -366,7 +371,7 @@
             ControllersPool[name] = _controllerClass;
 
             return _controllerClass;
-        }
+        };
     }
 
     function _d(a) {
@@ -380,8 +385,8 @@
      */
     function isDeferred(suspiciousObject) {
         //duck-typing
-        return _.isObject(suspiciousObject) && suspiciousObject['promise']
-            && typeof suspiciousObject['promise'] == 'function'
+        return _.isObject(suspiciousObject) && suspiciousObject.promise &&
+            typeof suspiciousObject.promise === 'function';
     }
 
     /**
@@ -392,7 +397,7 @@
      * @return {object} a Deferred Object
      */
     function assertDeferredByResult(deferred, result) {
-        if (typeof result == 'undefined') {
+        if (typeof result === 'undefined') {
             result = true;
         }
         return deferred[result ? 'resolve' : 'reject'](result);
@@ -411,7 +416,7 @@
 
         return (_.map(string.split(' '), function (entry) {
             return entry.replace(/(^|_)[a-z]/gi,function (match) {
-                return match.toUpperCase()
+                return match.toUpperCase();
             }).replace(/_/g, '');
         })).join(' ');
 
@@ -430,7 +435,7 @@
 
         return (_.map(string.split(' '), function (entry) {
             return entry.replace(/^[A-Z]/g, function (match) {
-                return match.toLowerCase()
+                return match.toLowerCase();
             })
                 .replace(/([a-z])([A-Z])/g, function ($, $1, $2) {
                     return $1 + '_' + $2.toLowerCase();
@@ -447,7 +452,7 @@
      * @return {*}
      */
     function invokeAction(controllerName, action, _arguments) {
-        var controller = new ControllersPool[controllerName];
+        var controller = new ControllersPool[controllerName]();
 
         var hooksParameters = [action].concat(_arguments);
         var deferred = $.Deferred();
@@ -463,14 +468,14 @@
         if (typeof controller._secureActions[action] === 'function') {
             //do session checking
             deferred = deferred.pipe(function () {
-                var result = controller['checkSession'].apply(controller, _arguments);
+                var result = controller.checkSession.apply(controller, _arguments);
 
                 if (isDeferred(result)) {
                     return result;
                 } else {
                     return assertDeferredByResult(new $.Deferred(), result);
                 }
-            })
+            });
         }
 
         //invoke the action
@@ -507,6 +512,6 @@
     window.debug = function () {
         return {
             'ControllersPool':ControllersPool
-        }
-    }
+        };
+    };
 })();
