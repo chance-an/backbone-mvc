@@ -21,33 +21,37 @@
 //
 //Usage:
 //To create a controller, use :
-/*
- BackboneMVC.Controller.extend({
- name: 'controller1', //mandatory field
 
- //defined once, will be invoked before each action method
- beforeFilter: function(){},
+//BackboneMVC.Controller.extend({
+//    name:'controller1', //mandatory field
+//
+//    //defined once, will be invoked before each action method
+//    beforeFilter:function () {
+//    },
+//
+//    //defined once, will be invoked after each action method
+//    afterRender:function () {
+//    },
+//
+//    //used with secure methods, expect true/false or Deferred Object.
+//    checkSession:function () {
+//    },
+//
+//    //action method
+//    action1:function () {
+//        this._privateMethod("Hello");
+//    },
+//
+//    //secure method, checkSession method will be invoked first
+//    user_action2:function () {
+//    },
+//
+//    //a private method start with _
+//    _privateMethod:function (message) {
+//        alert(message);
+//    }
+//})
 
- //defined once, will be invoked after each action method
- afterRender: function(){},
-
- //used with secure methods, expect true/false or Deferred Object.
- checkSession: function(){},
-
- //action method
- action1: function(){
- this._privateMethod("Hello");
- },
-
- //secure method, checkSession method will be invoked first
- user_action2: function(){},
-
- //a private method start with _
- _privateMethod: function(message){
- alert(message);
- }
- })
- */
 
 //------------------------------------------------------------------------------
 (function () {
@@ -81,7 +85,7 @@
         }
 
         _.extend(BaseController.prototype, {
-            _created: null
+            _created:null
         });
 
         BaseController.extend = function (properties) {
@@ -181,7 +185,7 @@
                     controllerName = underscored(components[0]);
                 }
 
-                //test if controller exists, if not, return deferred and reject.
+                //test if the controller exists, if not, return a deferred object and reject it.
                 if (typeof controllerName == 'undefined') {
                     return this['404'](); //no such controller, reject
                 }
@@ -348,7 +352,7 @@
                 _secureActions:secureActions
             });
             //remove the extend method if there is one, so it doesn't stay in the property history
-            if('extend' in tmpControllerProperties ){
+            if ('extend' in tmpControllerProperties) {
                 delete tmpControllerProperties['extend'];
             }
             //get around of singleton inheritance issue by using mixin
@@ -376,7 +380,8 @@
      */
     function isDeferred(suspiciousObject) {
         //duck-typing
-        return _.isObject(suspiciousObject) && suspiciousObject['promise'] && typeof suspiciousObject['promise'] == 'function'
+        return _.isObject(suspiciousObject) && suspiciousObject['promise']
+            && typeof suspiciousObject['promise'] == 'function'
     }
 
     /**
