@@ -6,7 +6,7 @@
         setupNavigation();
         setupVerticalNavigation();
 
-        router = new Backskin.Router(); //please use the new automatic router
+        router = new BackboneMVC.Router(); //please use the new automatic router
         Backbone.history.start(); //please still call Backbone's facility here
 
     }
@@ -205,7 +205,7 @@
     /**
      * Getting Started
      */
-    var Controller1 = Backskin.Controller.extend({
+    var Controller1 = BackboneMVC.Controller.extend({
         name: 'ctrl1', /* the only mandatory field */
 
         /**
@@ -233,7 +233,7 @@
     /**
      * Action Mapping
      */
-    Backskin.Controller.extend({
+    BackboneMVC.Controller.extend({
         name: 'my_controller', /* the only mandatory field */
 
         'my-method': function(how, when){
@@ -249,7 +249,7 @@
     /**
      * Asynchronouse calls
      */
-    var AsynchronousController = Backskin.Controller.extend({
+    var AsynchronousController = BackboneMVC.Controller.extend({
         name: 'asynchronous', /* the only mandatory field */
 
         'method': function(){
@@ -286,7 +286,7 @@
     /**
      * Event hooks
      */
-    Backskin.Controller.extend({
+    BackboneMVC.Controller.extend({
         name: 'event_hooks', /* the only mandatory field */
 
         beforeFilter: function(){
@@ -321,7 +321,7 @@
         }
     });
 
-    var EventHooks1= Backskin.Controller.extend({
+    var EventHooks1= BackboneMVC.Controller.extend({
         name: 'event_hooks1', /* the only mandatory field */
 
         beforeFilter: function(){
@@ -400,7 +400,7 @@
     /**
      * Session checking
      */
-    Backskin.Controller.extend({
+    BackboneMVC.Controller.extend({
         name: 'session_enabled', /* the only mandatory field */
 
         beforeFilter: function(){
@@ -448,7 +448,7 @@
      * Singleton
      * @type {*}
      */
-    var Singleton = Backskin.Controller.extend({
+    var Singleton = BackboneMVC.Controller.extend({
         name: 'singleton', /* the only mandatory field */
         value: 0,
 
@@ -468,7 +468,7 @@
     /**
      * Inheritance
      */
-    var Parent = Backskin.Controller.extend({
+    var Parent = BackboneMVC.Controller.extend({
         name: 'parent', /* the only mandatory field, even though the parent is not planned to be used,
         it still need to be granted a name. */
 
