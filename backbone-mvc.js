@@ -46,7 +46,7 @@
 //    user_action2:function () {
 //    },
 //
-//    //a private method start with _
+//    //a private method starts with _
 //    _privateMethod:function (message) {
 //        alert(message);
 //    }
