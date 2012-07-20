@@ -1,5 +1,5 @@
-Backskin
-========
+BackboneMVC
+===========
 
 * Based on Backbone.
 * This is a CakePHP-like controllers and url routing framework, but it is for the web front-end.
