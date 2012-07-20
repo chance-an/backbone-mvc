@@ -8,3 +8,5 @@ Backskin
 * Singleton controllers
 * Automatic session checking before invoking session sensitive controller actions
 * CakePHP-like event hooks: beforeFilter, afterRender etc.
+
+   For a complete user manual, please see  [http://chance-an.github.com/backbone-mvc/](http://chance-an.github.com/backbone-mvc/ ).
