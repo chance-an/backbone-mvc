@@ -508,10 +508,4 @@
         }
         router._history.push([controller_name, action, _arguments]);
     }
-
-    window.debug = function () {
-        return {
-            'ControllersPool':ControllersPool
-        };
-    };
 })();
