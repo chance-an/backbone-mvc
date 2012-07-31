@@ -71,11 +71,11 @@
     /**
      * This is the base prototype of the Controller classes.
      * The inheriting classes only expand the prototype so the trouble of handling
-     * is saved.
+     * private constructor is saved.
      * It makes sense that each controller is a singleton. The cases that a
      * controller's state need to be shared across the application are more than the
-     * ones that the states need to be kept independently. It also helps the user
-     * logic share the same controller state as the one the Router uses.
+     * cases that the states need to be kept independently. It also helps the user
+     * logic shares the same controller state as the one the Router uses.
      * However, if independent states are vital, one can extend a controller with
      * empty members or define their method statelessly.
      * @type {Class}
