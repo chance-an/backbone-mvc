@@ -7,13 +7,13 @@
 
     <script type="text/javascript" language="JavaScript">
         requirejs.config({
-            baseUrl: '../',
+            baseUrl: '../../',
             paths: {
                 'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min',
                 'BackboneMVC' : 'backbone-mvc',
                 'Backbone': 'http://backbonejs.org/backbone-min',
                 'underscore': 'http://underscorejs.org/underscore-min',
-                'controllers' : 'example/controllers'
+                'controllers' : 'example/requirejs/controllers'
             },
             shim:{
                 'Backbone': ['underscore'],

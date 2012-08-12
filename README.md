@@ -8,3 +8,9 @@ Backskin
 * Singleton controllers
 * Automatic session checking before invoking session sensitive controller actions
 * CakePHP-like event hooks: beforeFilter, afterRender etc.
+
+Examples
+========
+ There are some examples under /example/ :
+* _requirejs_ shows how to port BackboneMVC to your project with [RequireJS](http://requirejs.org/)
+* _scaffold_ shows a regular way of organizing your application using BackboneMVC.
