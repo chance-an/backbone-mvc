@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html >
+<head >
+    <meta charset='utf-8' >
+    <title >An example that uses require.js</title >
+    <script type="text/javascript" language="JavaScript" src="http://requirejs.org/docs/release/2.0.4/minified/require.js"></script>
+
+    <script type="text/javascript" language="JavaScript">
+        requirejs.config({
+            baseUrl: '../',
+            paths: {
+                'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min',
+                'BackboneMVC' : 'backbone-mvc',
+                'Backbone': 'http://backbonejs.org/backbone-min',
+                'underscore': 'http://underscorejs.org/underscore-min',
+                'controllers' : 'example/controllers'
+            },
+            shim:{
+                'Backbone': ['underscore'],
+                'BackboneMVC' : ['Backbone']
+            }
+        });
+
+        requirejs(['jquery'], function($){
+           $(document).ready(main);
+        });
+
+        function main(){
+            requirejs(['controllers/toy_controller'], function($){
+                var router = new BackboneMVC.Router(); //use the new automatic router
+                Backbone.history.start(); //still call Backbone's facility here
+
+                (new MyApp.Controllers.ToyController()).setup();
+            });
+        }
+    </script>
+</head >
+<body >
+    <ul>
+        <li>
+            <a href=""></a>
+        </li>
+    </ul>
+</body >
+</html >
