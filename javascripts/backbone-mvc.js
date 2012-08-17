@@ -46,7 +46,7 @@
 //    user_action2:function () {
 //    },
 //
-//    //a private method start with _
+//    //a private method starts with _
 //    _privateMethod:function (message) {
 //        alert(message);
 //    }
@@ -71,11 +71,11 @@
     /**
      * This is the base prototype of the Controller classes.
      * The inheriting classes only expand the prototype so the trouble of handling
-     * is saved.
+     * private constructor is saved.
      * It makes sense that each controller is a singleton. The cases that a
      * controller's state need to be shared across the application are more than the
-     * ones that the states need to be kept independently. It also helps the user
-     * logic share the same controller state as the one the Router uses.
+     * cases that the states need to be kept independently. It also helps the user
+     * logic shares the same controller state as the one the Router uses.
      * However, if independent states are vital, one can extend a controller with
      * empty members or define their method statelessly.
      * @type {Class}
@@ -216,6 +216,25 @@
              */
             getLastAction:function () {
                 return _.last(this._history, 1)[0];
+            },
+
+            /**
+             * Make navigate() returns a deferred object
+             * @param fragment
+             * @param options may contain trigger and replace options.
+             * @return {*} Deferred
+             */
+            navigate: function(fragment, options){
+                var _options = _.extend({}, options);
+                _options.trigger = false; //too hard to port Backbone's mechanism without much refactory,
+                // but such logical flaw can be exploited. The goal is to not modify Backbone.js at all
+
+                Backbone.Router.prototype.navigate.call(this, fragment, _options);
+                if(options.trigger){
+                    return this.dispatch(fragment);
+                }else{
+                    return (new $.Deferred()).resolve();
+                }
             }
         }),
 
@@ -508,10 +527,4 @@
         }
         router._history.push([controller_name, action, _arguments]);
     }
-
-    window.debug = function () {
-        return {
-            'ControllersPool':ControllersPool
-        };
-    };
 })();

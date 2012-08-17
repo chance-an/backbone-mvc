@@ -1,4 +1,6 @@
 (function(){
+    'use strict';
+
     var router;
     function initialize(){
         setupSyntaxHighlighter();
@@ -114,7 +116,7 @@
 
         $('body').scrollspy({
             offset: 37.6667
-        })
+        });
     }
 
     function setupVerticalNavigation(){
@@ -275,7 +277,7 @@
         }
     });
 
-    window['procedure1'] = function(){
+    window.procedure1 = function(){
         var r = router.navigate('asynchronous/method', {trigger:true, replace: false});
         r.done(function(){
             $('#area2').html('Nice I change to white!');
