@@ -216,6 +216,25 @@
              */
             getLastAction:function () {
                 return _.last(this._history, 1)[0];
+            },
+
+            /**
+             * Make navigate() returns a deferred object
+             * @param fragment
+             * @param options may contain trigger and replace options.
+             * @return {*} Deferred
+             */
+            navigate: function(fragment, options){
+                var _options = _.extend({}, options);
+                _options.trigger = false; //too hard to port Backbone's mechanism without much refactory,
+                // but such logical flaw can be exploited. The goal is to not modify Backbone.js at all
+
+                Backbone.Router.prototype.navigate.call(this, fragment, _options);
+                if(options.trigger){
+                    return this.dispatch(fragment);
+                }else{
+                    return (new $.Deferred()).resolve();
+                }
             }
         }),
 
