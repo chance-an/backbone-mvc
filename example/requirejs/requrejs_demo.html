@@ -30,6 +30,7 @@
                 var router = new BackboneMVC.Router(); //use the new automatic router
                 Backbone.history.start(); //still call Backbone's facility here
 
+                //call ToyController's setup action to generate links for `changeColor` action
                 (new MyApp.Controllers.ToyController()).setup();
             });
         }
