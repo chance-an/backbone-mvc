@@ -9,6 +9,7 @@
     afterEach:true
     runs:true
     waitsFor:true
+    exppect:true
 */
 
 (function(){
@@ -81,7 +82,7 @@
         });
     });
 
-    describe("A controller", function(){
+    describe("A Controller", function(){
         var publicMethod = jasmine.createSpy('publicMethod'),
             privateMethod = jasmine.createSpy('privateMethod');
         var deferred = new $.Deferred();
@@ -134,21 +135,131 @@
             runs(function(){
                 window.location = "#controller1/_privateMethod";
             });
-            var signal = false;
-            setTimeout(function(){
-                signal = true;
-            }, 80); //wait 80 ms
-            waitsFor(function(){
-                return signal;
-            }, 'call finished', 100);
+
+            waits(50);
 
             runs(function(){
                 expect(privateMethod).not.toHaveBeenCalled();
+            });
+
+        });
+    });
+
+    describe("A Secure Method", function(){
+        var deferred = new $.Deferred();
+        var testValue = 0;
+
+        var Controller2 = BackboneMVC.Controller.extend({
+            name: 'controller2',
+
+            checkSession: function(){
+            },
+
+            user_secure: function(){
+                testValue = 1;
+            },
+
+            afterRender: function(){
+                deferred.resolve();
+            }
+        });
+
+        beforeEach(function(){
+            testValue = 0;
+
+            runs(function(){
+                window.location = "#";
+            });
+
+            waits(50);
+        });
+
+        afterEach(function() {
+            deferred = new $.Deferred();
+        });
+
+        it("starts with \"user_\"", function(){
+            var controller = new Controller2();
+
+            expect(controller._secureActions.user_secure).toBeDefined();
+            expect(controller._secureActions.secure).toBeDefined();
+        });
+
+        it("will be triggered only after \"checkSession\" method is triggered first", function(){
+            spyOn(Controller2.prototype, 'checkSession');
+            spyOn(Controller2.prototype, 'user_secure');
+
+            runs(function(){
+                window.location = "#controller2/user_secure";
+            });
+
+            waitsFor(function(){
+                return deferred.state() === 'resolved';
+            }, 'call finished', 100);
+
+            runs(function(){
+                expect(Controller2.prototype.checkSession).toHaveBeenCalled();
+                expect(Controller2.prototype.user_secure).toHaveBeenCalled();
+            });
+        });
+
+        it("will not be triggered if \"checkSession\" method returns false", function(){
+            spyOn(Controller2.prototype, 'checkSession').andReturn(false);
+            spyOn(Controller2.prototype, 'user_secure');
+
+            runs(function(){
+                window.location = "#controller2/user_secure";
+            });
+
+            waits(50);
+
+            runs(function(){
+                expect(Controller2.prototype.checkSession).toHaveBeenCalled();
+                expect(Controller2.prototype.user_secure).not.toHaveBeenCalled();
+            });
+
+        });
+
+        it("nor \"checkSession\" method returns a deferred object which will be rejected", function(){
+            var deferred = $.Deferred();
+            spyOn(Controller2.prototype, 'checkSession').andReturn(deferred);
+            spyOn(Controller2.prototype, 'user_secure');
+
+            runs(function(){
+                window.location = "#controller2/user_secure";
+            });
+
+            waits(50);
+
+            runs(function(){
+                deferred.reject();
+                expect(Controller2.prototype.checkSession).toHaveBeenCalled();
+                expect(Controller2.prototype.user_secure).not.toHaveBeenCalled();
+            });
+
+        });
+
+        it("should be able to be triggered with a short name", function(){
+            spyOn(Controller2.prototype, 'user_secure').andCallThrough();
+
+            runs(function(){
+                window.location = "#controller2/secure";
+            });
+
+            waitsFor(function(){
+                return deferred.state() === 'resolved';
+            }, 'call finished', 100);
+
+            runs(function(){
+                expect(testValue).toEqual(1);
             });
         });
     });
 })();
 
+/**
+ * jasmine boilerplate
+ */
 (function () {
     'use strict';
 
@@ -170,6 +281,7 @@
         var router = new BackboneMVC.Router();
         Backbone.history.start();
         execJasmine();
+
     });
 
     function execJasmine() {
