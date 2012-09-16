@@ -239,7 +239,7 @@
         }),
 
         /**
-         * An extension of BackboneMVC.Model, add events of 'read' and 'failure' to
+         * An extension of BackboneMVC.Model, add events of 'read' and 'error' to
          * a model, which will be triggered upon loading data from server.
          *
          * This class assumes the returned json packet contains both 'error' and 'data' fields
@@ -269,18 +269,13 @@
                                 tmp.apply(model);
                             }
                         };
-                        //wrap the success callback, so we get a chance of triggering 'read' event
-                        //by taking over the '__fetchErrorCallback()' defined in 'parse()'
+                        //wrap the error callback, so we get a chance of triggering 'error' event
                         var error = options.error;
                         options.error = function (model, resp) {
                             if (error){
                                 error(model, resp);
                             }
-                            if (model.__fetchErrorCallback) {
-                                var tmp = model.__fetchErrorCallback;
-                                model.__fetchErrorCallback = null; //remove the temporary method after use
-                                tmp.apply(model);
-                            }
+                            model.trigger('error', error);
                         };
                         Backbone.Model.prototype.fetch.apply(this, [options].concat(_.rest(arguments)));
                     },
@@ -296,9 +291,8 @@
                         this.__fetchErrorCallback = null;
 
                         if (!response || response.error) {
-                            this.__fetchErrorCallback = function () {
-                                this.trigger('error', (response && response.error) || response);
-                            }.bind(this);
+                            //if response contains a non-null 'error' field, still trigger 'error' event
+                            this.trigger('error', (response && response.error) || response);
                             return {};
                         }
                         this.__fetchSuccessCallback = function () {

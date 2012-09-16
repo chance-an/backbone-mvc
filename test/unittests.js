@@ -255,6 +255,120 @@
             });
         });
     });
+
+    describe("A BackboneMVC model", function(){
+
+
+        var Model = BackboneMVC.Model.extend({
+            url: "mock"
+        });
+
+        var _originalJqueryAjax = $.ajax;
+        it("should be able to trigger 'read' event of the model if 'fetch' method is successful", function(){
+
+            var callback = jasmine.createSpy('callback');
+            var deferred = new $.Deferred();
+            //mock $.ajax
+            var parameters = [deferred, "{\"property1\":\"value1\", \"property2\":\"value2\"}"];
+            $.ajax = function(options){
+                setTimeout(function(){
+                    deferred.resolve(parameters);
+                }, 50);
+
+                if(typeof options.success !== 'undefined'){
+                    deferred.done(function(){
+                        options.success.apply(options.success, arguments);
+                    });
+                }
+
+                return deferred;
+            };
+
+            runs(function(){
+                var model = new Model();
+                model.on('read', callback);
+                model.fetch();
+            });
+
+            waitsFor(function(){
+                return deferred.state() === 'resolved';
+            }, 'call finished', 100);
+
+            runs(function(){
+                expect(callback).toHaveBeenCalled();
+            });
+        });
+
+        it("should be able to trigger 'fail' event of the model if 'fetch' method fails", function(){
+
+            var callback = jasmine.createSpy('callback');
+            var deferred = new $.Deferred();
+            //mock $.ajax
+            var parameters = [deferred, "{\"property1\":\"value1\", \"property2\":\"value2\"}"];
+            $.ajax = function(options){
+                setTimeout(function(){
+                    deferred.reject(parameters);
+                }, 50);
+
+                if(typeof options.error !== 'undefined'){
+                    deferred.fail(function(){
+                        options.error.apply(options.error, arguments);
+                    });
+                }
+                return deferred;
+            };
+
+            runs(function(){
+                var model = new Model();
+                model.on('error', callback);
+                model.fetch();
+            });
+
+            waitsFor(function(){
+                return deferred.state() === 'rejected';
+            }, 'call finished', 150);
+
+            runs(function(){
+                expect(callback).toHaveBeenCalled();
+            });
+        });
+
+        it("should be able to trigger 'fail' event of the model if 'fetch' method retrieves a json packet that " +
+            "contains a non-null field named \"error\"", function(){
+
+            var callback = jasmine.createSpy('callback');
+            var deferred = new $.Deferred();
+            //mock $.ajax
+            var parameters = [ $.parseJSON("{\"data\" : { \"property1\" : \"value1\", \"property2\" : \"value2\"}, " +
+                "\"error\":\"error\"}"), 200, deferred];
+            $.ajax = function(options){
+                setTimeout(function(){
+                    deferred.resolve(parameters);
+                }, 50);
+
+                if(typeof options.success !== 'undefined'){
+                    deferred.done(function(){
+                        options.success.apply(options.success, parameters);
+                    });
+                }
+                return deferred;
+            };
+
+            runs(function(){
+                var model = new Model();
+                model.on('error', callback);
+                model.fetch();
+            });
+
+            waits(150);
+
+            runs(function(){
+                expect(callback).toHaveBeenCalled();
+            });
+        });
+
+        $.ajax = _originalJqueryAjax;
+    });
 })();
 
 /**
