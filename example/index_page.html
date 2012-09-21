@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" language="JavaScript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="http://underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="http://backbonejs.org/backbone-min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../backbone-mvc.js"></script>
+    <script type="text/javascript" language="JavaScript" >
+
+        BackboneMVC.namespace('MyApp.Controllers');
+
+        MyApp.Controllers.RootController = BackboneMVC.Controller.extend({
+            name: 'root', /* name of the controller*/
+
+            index: function(){
+                var calabashBrothers = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple'];
+                var $li = $('li').remove();
+                var $ul = $('ul');
+                _.each(calabashBrothers, function(color){
+                    $li.clone().find('a').attr('href', '#service/changeColor/' + color)
+                            .html(color).parent().appendTo($ul);
+                });
+            }
+        });
+
+        MyApp.Controllers.ServiceController = BackboneMVC.Controller.extend({
+            name: 'service', /* the only mandatory field */
+
+            changeColor: function(color){
+                $('body').css('backgroundColor', color);
+            }
+        });
+
+        var router = new (BackboneMVC.Router.extend({
+            routes:{
+                '' : 'index'
+            },
+
+            index: function(){
+                router.navigate('root/index', {trigger:true, replace: false});
+            }
+        }))(); //please call router's class method extend()
+
+        $(document).ready(function(){
+            Backbone.history.start(); //please still call Backbone's facility here
+        });
+    </script>
+    <title>BackboneMVC Default Index Page Example</title>
+</head>
+<body >
+<ul>
+    <li>
+        <a href=""></a>
+    </li>
+</ul>
+</body >
+</html>

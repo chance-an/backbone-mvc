@@ -166,77 +166,90 @@
          * It must not be further customized, or the automatic routing feature cannot function.
          * @class BackboneMVC.Router
          */
-        Router:Backbone.Router.extend({
-            _history:[],
+        Router:(function(){
+            var _inherentRouterProperties = {
+                _history:[],
 
-            routes:{
-                "*components":'dispatch' // route everything to 'dispatch' method
-            },
+                routes:{
+                    "*components":'dispatch' // route everything to 'dispatch' method
+                },
 
-            dispatch:function (actionPath) {
-                var components = actionPath.replace(/\/+$/g, '').split('/');
-                var controllerName;
+                dispatch:function (actionPath) {
+                    var components = actionPath.replace(/\/+$/g, '').split('/');
+                    var controllerName;
 
-                //look for controllers
-                if (ControllersPool[components[0]]) {
-                    controllerName = components[0];
-                } else if (typeof ControllersPool[camelCased(components[0])] !== 'undefined') {
-                    controllerName = camelCased(components[0]);
-                } else if (typeof ControllersPool[underscored(components[0])] !== 'undefined') {
-                    controllerName = underscored(components[0]);
+                    //look for controllers
+                    if (ControllersPool[components[0]]) {
+                        controllerName = components[0];
+                    } else if (typeof ControllersPool[camelCased(components[0])] !== 'undefined') {
+                        controllerName = camelCased(components[0]);
+                    } else if (typeof ControllersPool[underscored(components[0])] !== 'undefined') {
+                        controllerName = underscored(components[0]);
+                    }
+
+                    //test if the controller exists, if not, return a deferred object and reject it.
+                    if (typeof controllerName === 'undefined') {
+                        return this['404'](); //no such controller, reject
+                    }
+
+                    var controller = new ControllersPool[controllerName]();
+                    //if the action is omitted, it is 'default'.
+                    var action = components.length > 1 ? components[1] : 'default';
+
+                    if (typeof controller._actions[action] !== 'function') {
+                        return this['404'](); //no such action, reject
+                    }
+
+                    //the URL components after the 2nd are passed to the action method
+                    var _arguments = components.length > 2 ? _.rest(components, 2) : [];
+
+                    addHistoryEntry(this, controllerName, action, _arguments);
+                    return invokeAction(controllerName, action, _arguments);
+                },
+
+                '404':function () {
+                    //do nothing, expect overriding
+                },
+
+                /**
+                 * Return the last invoked action
+                 * @return {object} the last action being invoked and it's parameters
+                 */
+                getLastAction:function () {
+                    return _.last(this._history, 1)[0];
+                },
+
+                /**
+                 * Make navigate() returns a deferred object
+                 * @param fragment
+                 * @param options may contain trigger and replace options.
+                 * @return {*} Deferred
+                 */
+                navigate: function(fragment, options){
+                    var _options = _.extend({}, options);
+                    _options.trigger = false; //too hard to port Backbone's mechanism without much refactory,
+                    // but such logical flaw can be exploited. The goal is to not modify Backbone.js at all
+
+                    Backbone.Router.prototype.navigate.call(this, fragment, _options);
+                    if(options.trigger){
+                        return this.dispatch(fragment);
+                    }else{
+                        return (new $.Deferred()).resolve();
+                    }
                 }
+            };
 
-                //test if the controller exists, if not, return a deferred object and reject it.
-                if (typeof controllerName === 'undefined') {
-                    return this['404'](); //no such controller, reject
-                }
-
-                var controller = new ControllersPool[controllerName]();
-                //if the action is omitted, it is 'default'.
-                var action = components.length > 1 ? components[1] : 'default';
-
-                if (typeof controller._actions[action] !== 'function') {
-                    return this['404'](); //no such action, reject
-                }
-
-                //the URL components after the 2nd are passed to the action method
-                var _arguments = components.length > 2 ? _.rest(components, 2) : [];
-
-                addHistoryEntry(this, controllerName, action, _arguments);
-                return invokeAction(controllerName, action, _arguments);
-            },
-
-            '404':function () {
-                //do nothing, expect overriding
-            },
-
-            /**
-             * Return the last invoked action
-             * @return {object} the last action being invoked and it's parameters
-             */
-            getLastAction:function () {
-                return _.last(this._history, 1)[0];
-            },
-
-            /**
-             * Make navigate() returns a deferred object
-             * @param fragment
-             * @param options may contain trigger and replace options.
-             * @return {*} Deferred
-             */
-            navigate: function(fragment, options){
-                var _options = _.extend({}, options);
-                _options.trigger = false; //too hard to port Backbone's mechanism without much refactory,
-                // but such logical flaw can be exploited. The goal is to not modify Backbone.js at all
-
-                Backbone.Router.prototype.navigate.call(this, fragment, _options);
-                if(options.trigger){
-                    return this.dispatch(fragment);
-                }else{
-                    return (new $.Deferred()).resolve();
-                }
+            function extend(properties){
+                var _routes = _.extend(properties.routes || {}, _inherentRouterProperties.routes );
+                return Backbone.Router.extend(_.extend(properties, _inherentRouterProperties, { routes: _routes }));
             }
-        }),
+
+            var RouterClass = Backbone.Router.extend(
+                _.extend({ extend: extend }, _inherentRouterProperties)
+            );
+            RouterClass.extend = extend;
+            return RouterClass;
+        })(),
 
         /**
          * An extension of BackboneMVC.Model, add events of 'read' and 'error' to
