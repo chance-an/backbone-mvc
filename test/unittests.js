@@ -9,11 +9,36 @@
     afterEach:true
     runs:true
     waitsFor:true
-    exppect:true
+    expect:true
+    beforeEach: true
+    waits: true
+    spyOn: true
 */
 
 (function(){
     'use strict';
+
+    function compareObject(obj1, obj2){
+        var keys1 = _.keys(obj1);
+
+        if(keys1.length !== _.keys(obj2).length){
+            return false;
+        }
+
+        for(var i = keys1.length-1; i >= 0; i--){
+            var key = keys1[i];
+            var value1 = obj1[key];
+            var value2 = obj2[key];
+
+            var result = _.isObject(value1) ? compareObject(value1, value2) : value1 === value2 ;
+            if(!result){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
 
     describe("Controller inheritance", function() {
 
@@ -258,7 +283,6 @@
 
     describe("A BackboneMVC model", function(){
 
-
         var Model = BackboneMVC.Model.extend({
             url: "mock"
         });
@@ -368,6 +392,91 @@
         });
 
         $.ajax = _originalJqueryAjax;
+    });
+
+    describe("A BackboneMVC router", function(){
+
+        var router = null;
+
+        var defaultIndexCallback = jasmine.createSpy('defaultIndex');
+        var customizedHandlerCallback = jasmine.createSpy('customizedHandler');
+        var controllerAction = jasmine.createSpy('controllerAction');
+
+
+        var initialize = _.once(function(){
+            Backbone.history.stop();
+
+            router = new (BackboneMVC.Router.extend({
+                routes: {
+                    '' : 'index',
+                    'cntr/action/fixed_value': 'customized-handler'
+                },
+
+                index : defaultIndexCallback,
+
+                'customized-handler': customizedHandlerCallback
+            }))();
+
+
+            BackboneMVC.Controller.extend({
+                'name': 'cntr',
+
+                action: controllerAction
+            });
+
+            Backbone.history.start();
+        });
+
+        beforeEach(function(){
+            initialize();
+
+
+        });
+
+        it("should be able to extend with customized routing", function(){
+            expect(compareObject(router.routes, {
+                '': "index",
+                '*components' : 'dispatch',
+                'cntr/action/fixed_value': 'customized-handler'
+            })).toBeTruthy();
+
+        });
+
+        it("should allow empty hash to be triggered with a customized routing rule", function(){
+            runs(function(){
+                window.location = "#";
+            });
+
+            waits(50);
+
+            runs(function(){
+                expect(defaultIndexCallback).toHaveBeenCalled();
+            });
+        });
+
+        it("it should grant higher priority to customized routing rules than automatic routing", function(){
+            runs(function(){
+                window.location = "#cntr/action/fixed_value";
+            });
+
+            waits(50);
+
+            runs(function(){
+                expect(customizedHandlerCallback).toHaveBeenCalled();
+                expect(controllerAction).not.toHaveBeenCalled();
+            });
+
+            runs(function(){
+                window.location = "#cntr/action/value";
+            });
+
+            waits(50);
+
+            runs(function(){
+                expect(controllerAction).toHaveBeenCalledWith('value');
+            });
+        });
+
     });
 })();
 
