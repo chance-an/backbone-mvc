@@ -71,7 +71,11 @@
             <li class="features-item"><a >Session Checking</a></li>
             <li class="features-item"><a >Controllers&nbsp;Are<br/>Singletons</a></li>
             <li class="features-item"><a >Controller<br/>Inheritance</a></li>
+            <li class="features-item"><a >Exceptional <br/>Routing Rules</li>
         </ul>
+    </div>
+    <div id="ad">
+
     </div>
 </header >
 
@@ -584,6 +588,71 @@ var Child2 = Parent.extend({
             </div>
             <p>Trigger <code>Child1::method()</code> <a href="#child1/method">#child1/method</a></p>
             <p>Trigger <code>Child2::method()</code> <a href="#child2/method">#child2/method</a></p>
+
+        <h4>Exceptional Routing Rules</h4>
+        <p>When BackboneMVC's automatic routing doesn't suffice your requirement, customized routing rules can be used
+            to comply with backbone.js' convention. This can be achieved by further extending
+            <code>BackboneMVC.Router</code> class.</p>
+        <div id="area8">
+<pre class="brush: javascript">
+    var MyExtendedRouter = BackboneMVC.Router.extend({
+        routes:{
+            &#39;&#39; : &#39;index&#39;,
+            &#39;root/action/hardcoded_value&#39;: &#39;special_handling&#39;
+        },
+
+        index: function(){
+            // do customized logic, for example, launch a default controller&#39;s action
+            router.navigate("root/index", {trigger:true, replace: true});
+        },
+
+        special_handling: function(){
+            (new RootController())._report(
+                "I just think of something more important to do.";
+            );
+
+            (new RootController())._changeColor("purple");
+        }
+    });
+
+    var RootController = BackboneMVC.Controller.extend({
+        name: "root", /* the only mandatory field */
+
+        index: function(){
+            console.log(&quot;asda&quot;);
+            this._report(&quot;&#39;index&#39; method invoked&quot;);
+            this._changeColor(&quot;blue&quot;);
+        },
+
+        action: function(param){
+            this._report(&quot;&#39;action&#39; method triggered with &quot; + param);
+            this._changeColor(&quot;red&quot;);
+        },
+
+        _report: function(text){
+            $("#area8").append("&lt;div&gt;&#39; + text + &#39;&lt;/div&gt;");
+        },
+
+        _changeColor: function(color){
+            $("#area8").css("backgroundColor", color);
+        }
+    });
+</pre>
+        </div>
+
+        <p>Trigger routing for empty hash  <a id="empty-hash-trigger-without-scrolling" href="javascript://" >#</a></p>
+        <p>
+            Some hash patterns that do not follow BackboneMVC's automatic routing can be dealt with this way, especially
+            the empty hash which usually points to a default index page. A default controller's default action can be
+            redirected to as the example above shows, or any other code logic can be used.
+        </p>
+        <p>
+            If you define customized rules, it will always have higher priority than BackboneMVC's automatic routing.
+            See examples:
+        </p>
+        <p>Trigger <code>special_handling()</code> <a href="#root/action/hardcoded_value">#root/action/hardcoded_value</a></p>
+        <p>Trigger <code>RootController::method()</code> <a href="#root/action/offer">#root/action/offer</a></p>
+
         </section>
 
 

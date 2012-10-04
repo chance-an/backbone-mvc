@@ -7,8 +7,11 @@
         setupCodeAreaAction();
         setupNavigation();
         setupVerticalNavigation();
+        setupLinkHandlers();
 
         router = new BackboneMVC.Router(); //please use the new automatic router
+
+        var myExtendedRouter = new MyExtendedRouter(); // a router extension
         Backbone.history.start(); //please still call Backbone's facility here
 
     }
@@ -200,6 +203,15 @@
         $(window).on('scroll', showHideSideBar);
         $(window).on('scroll', updateSideBarNavigation);
 
+    }
+
+    function setupLinkHandlers(){
+        $('#empty-hash-trigger-without-scrolling').click(function(){
+            //http://stackoverflow.com/questions/5793755/how-to-avoid-scrolling-to-the-top-of-the-page-when-emptying-window-location-hash
+            var scrollPosition = $(window).scrollTop();
+            window.location.hash = '';
+            $(window).scrollTop(scrollPosition);
+        });
     }
 
     $(document).ready(initialize);
@@ -501,6 +513,50 @@
         name: 'child2' /* the only mandatory field */
 
         //this controller doesn't implement anything, so its parent's methods will be passed over.
+    });
+
+    /* Exceptional routing rules*/
+    var MyExtendedRouter = BackboneMVC.Router.extend({
+        routes:{
+            '' : 'index',
+            'root/action/hardcoded_value': 'special_handling'
+        },
+
+        index: function(){
+            // do customized logic, for example, launch a default controller's action
+            router.navigate('root/index', {trigger:true, replace: true});
+        },
+
+        special_handling: function(){
+            (new RootController())._report(
+                'I just think of something more important to do.'
+            );
+
+            (new RootController())._changeColor('purple');
+        }
+    });
+
+    var RootController = BackboneMVC.Controller.extend({
+        name: 'root', /* the only mandatory field */
+
+        index: function(){
+            console.log("asda");
+            this._report("'index' method invoked");
+            this._changeColor("blue");
+        },
+
+        action: function(param){
+            this._report("'action' method triggered with " + param);
+            this._changeColor("red");
+        },
+
+        _report: function(text){
+            $('#area8').append('<div>' + text + '</div>');
+        },
+
+        _changeColor: function(color){
+            $('#area8').css('backgroundColor', color);
+        }
     });
 
 })();
