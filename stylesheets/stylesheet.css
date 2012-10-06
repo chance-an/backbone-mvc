@@ -452,3 +452,10 @@ p[id^="area"]{
     top: 50%;
     cursor: pointer;
 }
+
+/* AdSense */
+body > ins{
+    position: fixed!important;
+    top: 38px;
+    right: 1em;
+}

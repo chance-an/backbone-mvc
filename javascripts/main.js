@@ -107,11 +107,15 @@
                 if(!$element.hasClass('float')){
                     $element.addClass('float');
                 }
+                $('ins').css('top', '38px');
             }else{
                 if($element.hasClass('float')){
                     $element.removeClass('float');
                 }
+                $('ins').css('top', elemBottom - docViewTop + 20);
             }
+
+            $('ins').css('position', 'fixed');
 
         }
 
