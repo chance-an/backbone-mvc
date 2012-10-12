@@ -1,3 +1,5 @@
+//BackboneMVC 1.0
+
 //Copyright 2012 Changsi An
 
 //This file is part of Backbone-MVC.
