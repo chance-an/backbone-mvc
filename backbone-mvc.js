@@ -226,6 +226,9 @@
                  * @return {*} Deferred
                  */
                 navigate: function(fragment, options){
+                    if (!options || options === true) {
+                        options = {trigger: options};
+                    }
                     var _options = _.extend({}, options);
                     _options.trigger = false; //too hard to port Backbone's mechanism without much refactory,
                     // but such logical flaw can be exploited. The goal is to not modify Backbone.js at all
