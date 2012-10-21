@@ -402,8 +402,7 @@
         var customizedHandlerCallback = jasmine.createSpy('customizedHandler');
         var controllerAction = jasmine.createSpy('controllerAction');
 
-
-        var initialize = _.once(function(){
+        var initialize = _.once(function(){ //_.once() guarantees that this function is only run once.
             Backbone.history.stop();
 
             router = new (BackboneMVC.Router.extend({
@@ -429,8 +428,24 @@
 
         beforeEach(function(){
             initialize();
+        });
 
+        it("::navigate(url, option) method has an optional `option` parameter. If it is ignored, " +
+            "the corresponding action will not be invoked", function(){
+            var currentHash;
+            runs(function(){
+                currentHash = window.location.hash;
+                router.navigate('cntr/action');
+            });
 
+            waitsFor(function(){
+                return window.location.hash !== currentHash;
+            }, null, 100);
+
+            runs(function(){
+                expect(controllerAction).not.toHaveBeenCalled();
+                expect(window.location.hash).toEqual('#cntr/action');
+            });
         });
 
         it("should be able to extend with customized routing", function(){
