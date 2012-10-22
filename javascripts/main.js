@@ -544,7 +544,6 @@
         name: 'root', /* the only mandatory field */
 
         index: function(){
-            console.log("asda");
             this._report("'index' method invoked");
             this._changeColor("blue");
         },
