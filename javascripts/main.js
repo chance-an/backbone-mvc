@@ -9,10 +9,10 @@
         setupVerticalNavigation();
         setupLinkHandlers();
 
-        router = new BackboneMVC.Router(); //please use the new automatic router
+        router = new BackboneMVC.Router(); //Start the new automatic router
 
         var myExtendedRouter = new MyExtendedRouter(); // a router extension
-        Backbone.history.start(); //please still call Backbone's facility here
+        Backbone.history.start(); //We still call Backbone's facility here
 
     }
 
@@ -116,7 +116,6 @@
             }
 
             $('ins').css('position', 'fixed');
-
         }
 
         $(window).on('scroll', _checkPosition);
@@ -127,6 +126,63 @@
     }
 
     function setupVerticalNavigation(){
+        var actions = {};
+        //bind navigation events
+        $('li.features-item').each(function(i, e){
+            var name = generateName($(e).text());
+            actions[name] = function(){
+                this._scrollToSection(i);
+            };
+            $(e).on('click', function(){
+                router.navigate('features/' + name, {trigger: true, replace: false});
+            });
+
+        });
+
+        BackboneMVC.Controller.extend(_.extend({
+            name: 'features',
+
+            beforeFilter: function(){
+                var deferred = new $.Deferred();
+
+                // if the #primary_nav is not floating, the caclulation of the coordinates of each secion is probably
+                // inaccurate. So first scroll to features
+                if(!$('#primary_nav').hasClass('float')){
+                    var currentHash = window.location.hash;
+                    window.location = '#features';
+                    var intervalHandler = setInterval(function(){
+                        if($('#primary_nav').hasClass('float')){
+                            clearInterval(intervalHandler);
+                            router.navigate('#' + currentHash); //recover the current hash tag
+                            deferred.resolve();
+                        }
+                    }, 10);
+                }else{
+                    deferred.resolve();
+                }
+
+                return deferred;
+            },
+
+            _scrollToSection: function(index){
+                var headerNavHeight = $('#primary_nav').height() + 1;
+                var positions = $('#features h4').map(function(i, e){
+                    return $(e).offset().top - headerNavHeight;
+                });
+
+                var $all = $('li.features-item');
+                $all.removeClass('active');
+                $($all[index]).addClass('active');
+                $(window).scrollTop(positions[index]);
+
+
+            }
+        }, actions));
+
+        function generateName(string){
+            return $.trim(string.toLowerCase()).replace(/\s+/g, '_');
+        }
+
         function updateSideBar(){
             var $element = $('#sidebar');
             var primaryNavHeight = $('#primary_nav').height() + 1;
@@ -185,23 +241,6 @@
                 $($all[index]).addClass('active');
             }
         }
-
-        //bind navigation events
-        $('li.features-item').each(function(i, e){
-            $(e).on('click',(function(i){
-                return function(){
-                    var headerNavHeight = $('#primary_nav').height() + 1;
-                    var positions = $('#features h4').map(function(i, e){
-                        return $(e).offset().top - headerNavHeight;
-                    });
-
-                    var $all = $('li.features-item');
-                    $all.removeClass('active');
-                    $($all[i]).addClass('active');
-                    $(window).scrollTop(positions[i]);
-                };
-            })(i));
-        });
 
         $(window).on('resize', updateSideBar);
         $(window).on('scroll', showHideSideBar);
@@ -544,7 +583,6 @@
         name: 'root', /* the only mandatory field */
 
         index: function(){
-            console.log("asda");
             this._report("'index' method invoked");
             this._changeColor("blue");
         },
