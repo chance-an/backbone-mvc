@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html >
 <head >
     <meta charset='utf-8' >
@@ -45,7 +45,6 @@
 <header >
     <div id="title" class="container" >
         <h1 >BackboneMVC</h1 >
-        <h2 ></h2 >
 
         <section id="downloads" >
             <a href="https://raw.github.com/chance-an/backbone-mvc/master/backbone-mvc.js" class="btn" >Download
@@ -74,7 +73,7 @@
             <li class="features-item"><a >Session Checking</a></li>
             <li class="features-item"><a >Controllers&nbsp;Are<br/>Singletons</a></li>
             <li class="features-item"><a >Controller<br/>Inheritance</a></li>
-            <li class="features-item"><a >Exceptional <br/>Routing Rules</li>
+            <li class="features-item"><a >Customized <br/>Routing Rules</a></li>
         </ul>
     </div>
 </header >
@@ -82,11 +81,11 @@
 <div class="container" >
     <section id="main_content" >
         <section >
-            <p >BackboneMVC adds the missing Controller components into your project if you also use
-                <a href="http://github.com/documentcloud/backbone/" >Backbone.js</a >, so now you have a complete MVC
+            <p >BackboneMVC adds the missing Controller component to your project if you use
+                <a href="http://github.com/documentcloud/backbone/" >Backbone.js</a >, giving you a complete MVC
                 framework. Like
                 <a href="http://cakephp.org/" >CakePHP</a >, it automatically routes your urls to the correct controller
-                and its actions, but it is a framework for the web front end.
+                and action, but it is a framework for the web front end.
             </p >
         </section >
 
@@ -95,56 +94,59 @@
 
             <p >Backbone.js does an excellent job of keeping the HTML UI and your Javascript business in sync.
                 However the difficulties we face when
-                we build Javascript web applications are not completely addressed by Backbone.js . Sometimes the difficulty of
-                efficiently organizing the Javascript logic itself is prominent. Using urls to lead the execution of the Javascript logic
+                we build Javascript web applications are not completely addressed by Backbone. Sometimes the difficulty of
+                efficiently organizing the Javascript logic itself is prominent. Using urls to organize the execution of the Javascript logic
                 is a good way to implement your business logic. The browsers' assumption of a traditional server/client
                 model is not compromised, so the browsers' basic functions can be preserved. It also helps resume the correct
                 stage in your business flow from a stateless page.
-            <p>Backbone.js provides
-                <a href="http://backbonejs.org/#Router">Router</a> component to map an url to a function.
+            <p>Backbone.js provides the
+                <a href="http://backbonejs.org/#Router">Router</a> component to map a url to a function.
                 It becomes cumbersome when the application is divided into many modules and there are many operations to
                 be mapped for different urls. Besides, due to the limitations of the language itself, it is not easy to
-                share common processes(like pre-processors and post-processors) among those operations without a lot code duplication.
+                share common processes (like pre-processors and post-processors) among those operations without a lot of code duplication.
                 It will become even verbose if your application has a lot asynchronous calls.
             </p >
             <p>
-                BackboneMVC is designed just to address these issues.
+                BackboneMVC is designed to address just these issues.
             </p>
-            <p >Now you don't have to worry about the Router. BackboneMVC takes care of the chores for you and provides you the
-                Controllers you have longed. Just define the Controllers and it starts to work automatically. You also get
+            <p >Now you don't have to worry about defining the Router. BackboneMVC takes care of this chore for you automatically. Just define the Controllers and it starts to work automatically. You also get
                 the functionality of automatic session checking and event hooks like 'beforeFilter' and 'afterRender'.
-                There are also some utilities provided as well.
+                There are also some Backbone.js helper utilities provided as well.
             </p >
             <p> BackboneMVC doesn't accomplish what Backbone cannot achieve, but it makes many tasks easier by providing
-                many conveniences. So it becomes very practical and useful.</p>
+                useful shortcuts. So Backbone.js now becomes very practical and useful.</p>
         </section >
 
         <section id="getting-started" class="chapter" >
             <h3 >Getting started</h3 >
 
-            <p >BackboneMVC depends on some other libraries. Before importing it, JQuery, Underscore and Backbone.js must also be imported.</p >
-            <p >The source code file for BackboneMVC is currently called <a href="https://raw.github.com/chance-an/BackboneMVC/master/backbone-mvc.js">backbone-mvc.js</a></p >
+            <p >BackboneMVC depends on some other libraries. Before importing it, jQuery, Underscore and Backbone.js must be imported.</p >
+            <p >The source code for BackboneMVC is currently called <a href="https://raw.github.com/chance-an/BackboneMVC/master/backbone-mvc.js">backbone-mvc.js</a></p >
 <pre class="brush: html">
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
     &lt;head&gt;
-        &lt;script src=&quot;http://code.jquery.com/jquery-1.7.2.min.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
-        &lt;script src=&quot;http://underscorejs.org/underscore-min.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
-        &lt;script src=&quot;http://backbonejs.org/backbone-min.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
-        &lt;script src=&quot;backbone-mvc.js&quot; type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;http://code.jquery.com/jquery-1.7.2.min.js&quot; 
+		type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;http://underscorejs.org/underscore-min.js&quot; 
+		type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;http://backbonejs.org/backbone-min.js&quot; 
+		type=&quot;text/javascript&quot; language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
+        &lt;script src=&quot;backbone-mvc.js&quot; type=&quot;text/javascript&quot; 
+		language=&quot;JavaScript&quot; &gt;&lt;/script&gt;
     &lt;/head&gt;
 
 ...
 &lt;/html&gt;
 </pre >
-       <p>Then you can start to define your controllers. It follows the same syntax as you define Model and View. To define a <code>Controller</code>,
-           use <code>BackboneMVC.Controler.extend(properties)</code> method :</p>
+       <p>Then you can start to define your controllers. It follows the same syntax as when you define Backbone Models and Views. To define a <code>Controller</code>,
+           use the <code>BackboneMVC.Controller.extend(properties)</code> method :</p>
 <pre class="brush: javascript">
     var Controller1 = BackboneMVC.Controller.extend({
         name: 'ctrl1', /* the only mandatory field */
 
         /**
-         * This is a common action method, it is invoked
+         * This is a standard action method, it is invoked
          * automatically if url matches
          */
         hello: function(){
@@ -173,14 +175,14 @@
                 are private methods, which will be disregarded by the router.</li>
         </ul>
 
-        <p>The last step is to create <strong class="blue">BackboneMVC</strong>'s router instance, and start the
+        <p>The last step is to create <strong class="blue">BackboneMVC</strong>'s Router instance, and start
             <strong class="red">Backbone</strong>'s <a href="http://backbonejs.org/#History">History</a> component, so the
-        routing mechanism will take effect.</p>
+        routing mechanism will be activated.</p>
 
 <pre class="brush: javascript">
 
-    var router = new BackboneMVC.Router(); //please use the new automatic router
-    Backbone.history.start(); //please still call Backbone's facility here
+    var router = new BackboneMVC.Router(); //Start the new automatic router
+    Backbone.history.start(); //We still call Backbone's default component here
 
 </pre>
         <p>That's all. Give it a try. (Be aware of the URL change in your browser.)</p>
@@ -191,7 +193,7 @@
         <h5>Notice:</h5>
         <ul>
             <li>You only need to define the <code>Controller</code>, you don't even have to instantiate it.</li>
-            <li>If you directly visit that URL(with hash), the method will still be invoked.</li>
+            <li>If you directly visit that URL(with the hash tag), the method will still be invoked.</li>
         </ul>
         </section >
 
@@ -200,14 +202,14 @@
 
             <h4>URL-Action Mapping</h4 >
             <p>
-                According to Backbone's <a href="http://backbonejs.org/#Router">Router</a> component. The hash
-                fragments(#page) or a portion of the static url can be used for routing. It's the same for BackboneMVC's
-                routing strategy. In this documentation, we will assume you use the hash fragments way.
+                According to Backbone's <a href="http://backbonejs.org/#Router">Router</a> component, the hash
+                fragments (#page) or a portion of the static url can be used for routing. It's the same for BackboneMVC's
+                routing strategy. In this documentation, we will assume you use the hash fragment method.
             </p>
 
             <p>
-                Like CakePHP, the hash fragments are divided by slashes into <code class="term">controller name</code>,
-                <code class="term">method</code> and <code class="term">optional parameters</code> three parts.
+                Like CakePHP, the hash fragments are divided by slashes into three parts: <code class="term">controller name</code>,
+                <code class="term">method</code> and <code class="term">optional parameters</code>.
             </p>
             <pre>
  URL_TO_ROUTE := CONTROLLER_NAME '/' METHOD_NAME (ADDITIONAL_PARAMETERS)
@@ -245,16 +247,16 @@ BackboneMVC.Controller.extend({
                     href="#my_controller/my-method/happy/birthday">#my_controller/my-method/happy/birthday</a></p>
             <p>Trigger <code>my-method()</code> with 1 parameter: <br/><a href="#my_controller/my-method/happy">#my_controller/my-method/happy</a></p>
 
-            <p>Private methods do not count. This helps protect your encapsulation.</p>
-            <p>Trigger a private method: <a href="#my_controller/_output/really?">my_controller/_output/really?</a></p>
+            <p>Private methods can't be triggered. This helps enforce your encapsulation.</p>
+            <p>Trigger a private method (this will fail): <a href="#my_controller/_output/really?">my_controller/_output/really?</a></p>
 
-            <h4>Asynchronous Call</h4 >
+            <h4>Asynchronous Calling</h4 >
             <p>The <a href="http://backbonejs.org/#Router-navigate"><code class="term">navigate()</code></a> method
                 of  Backbone's <a href="http://backbonejs.org/#Router">Router</a> component can trigger url routing
                 programmatically. BackboneMVC further enhances this method, and the method now returns a
                 <a href="http://api.jquery.com/category/deferred-object/">JQuery
                 Deferred object</a>. You can use it to make sure the action method has finished. This is useful when
-                it contains asynchronous calls. </p>
+                making asynchronous calls. </p>
 
             <p>See the following example:</p>
 <pre class="brush: javascript">
@@ -397,7 +399,7 @@ var EventHooks1= BackboneMVC.Controller.extend({
         this._changeColor(&#39;MidnightBlue&#39;);
         this._report(&#39;method2 invoked&#39;);
         this._report(&#39;afterRender won\&#39;t be executed&#39;);
-        return false; // a false value, the subsequent method gets no chance to be executed
+        return false; // a false value, the subsequent method has no chance to be executed
     },
 
     method3: function(){
@@ -554,7 +556,7 @@ window['procedure4'] = function(){
 <pre class="brush: javascript">
 var Parent = BackboneMVC.Controller.extend({
     name: &#39;parent&#39;, /* the only mandatory field, even though the parent is not planned to be used,
-    it still need to be granted a name. */
+    it will still need to be assigned a name. */
 
     method: function(){
         this._report(&#39;Parent method invoked&#39;);
@@ -589,9 +591,9 @@ var Child2 = Parent.extend({
             <p>Trigger <code>Child1::method()</code> <a href="#child1/method">#child1/method</a></p>
             <p>Trigger <code>Child2::method()</code> <a href="#child2/method">#child2/method</a></p>
 
-        <h4>Exceptional Routing Rules</h4>
-        <p>When BackboneMVC's automatic routing doesn't suffice your requirement, customized routing rules can be used
-            to comply with backbone.js' convention. This can be achieved by further extending
+        <h4>Custom Routing Rules</h4>
+        <p>When BackboneMVC's automatic routing doesn't suffice for your requirements, customized routing rules can be used
+            to comply with backbone.js' convention. This can be achieved by further extending the
             <code>BackboneMVC.Router</code> class.</p>
         <div id="area8">
 <pre class="brush: javascript">
@@ -608,7 +610,7 @@ var Child2 = Parent.extend({
 
         special_handling: function(){
             (new RootController())._report(
-                "I just think of something more important to do.";
+                "I just thought of something more important to do.";
             );
 
             (new RootController())._changeColor("purple");
@@ -642,8 +644,8 @@ var Child2 = Parent.extend({
         <p>Trigger routing for empty hash  <a id="empty-hash-trigger-without-scrolling" href="javascript://" >#</a></p>
         <p>
             Some hash patterns that do not follow BackboneMVC's automatic routing can be dealt with this way, especially
-            the empty hash which usually points to a default index page. A default controller's default action can be
-            redirected to as the example above shows, or any other code logic can be used.
+            the empty hash which usually points to a default index page. The default controller's default action can be
+            redirected to, as the example above shows, or any other code logic can be used.
         </p>
         <p>
             If you define customized rules, it will always have higher priority than BackboneMVC's automatic routing.
