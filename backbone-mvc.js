@@ -177,7 +177,7 @@
                 },
 
                 dispatch:function (actionPath) {
-                    var components = actionPath.replace(/\/+$/g, '').split('/');
+                    var components = (actionPath || '').replace(/\/+$/g, '').split('/');
                     var controllerName;
 
                     //look for controllers
