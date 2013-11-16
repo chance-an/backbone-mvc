@@ -540,3 +540,11 @@
         router._history.push([controller_name, action, _arguments]);
     }
 })();
+
+// Register as a named AMD module, since BackboneMVC can be concatenated with
+// other files that may use define, but not via a proper concatenation script
+// that understands anonymous AMD modules. A named AMD is safest and most robust
+// way to register.
+if ( typeof define === "function" && define.amd ) {
+    define( "BackboneMVC", [], function () { return BackboneMVC; } );
+}

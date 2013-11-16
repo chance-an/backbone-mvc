@@ -1,4 +1,4 @@
-define(['BackboneMVC'], function(){
+define(['BackboneMVC'], function(BackboneMVC){
 
     BackboneMVC.namespace('MyApp.Controllers');
 
