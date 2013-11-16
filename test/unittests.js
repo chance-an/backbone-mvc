@@ -18,6 +18,13 @@
 (function(){
     'use strict';
 
+    requirejs.config({
+        baseUrl: '../',
+        paths: {
+            'BackboneMVC' : 'backbone-mvc'
+        }
+    });
+
     function compareObject(obj1, obj2){
         var keys1 = _.keys(obj1);
 
@@ -39,6 +46,24 @@
         return true;
 
     }
+
+    describe('BackboneMVC module', function(){
+
+        it('should export a symbol for dependency referencing', function(){
+            var done = false;
+            runs(function(){
+                requirejs(['BackboneMVC'], function(module){
+                    expect(module).toBe(BackboneMVC);
+                    done = true;
+                })
+            });
+
+            waitsFor(function(){
+                return done == true;
+            }, 'requirejs loading module timeout', 100);
+
+        })
+    });
 
     describe("Controller inheritance", function() {
 
