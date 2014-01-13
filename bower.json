@@ -1,0 +1,19 @@
+{
+    "name": "chance-an/backbone-mvc",
+    "version": "1.0.4",
+    "main": "backbone-mvc.js",
+    "description": "Add Controllers to Backbone, route url hash to your controller method.",
+    "license": "GNU LESSER",
+    "ignore": [
+        "example",
+        "test"
+    ],
+    "dependencies": {
+        "jquery": ">=1.7.2",
+        "backbone": "*",
+        "underscore": "*"
+    },
+    "devDependencies": {
+        "jasmine": "*"
+    }
+}
