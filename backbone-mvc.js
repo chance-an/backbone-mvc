@@ -1,4 +1,4 @@
-//BackboneMVC 1.0
+//BackboneMVC 1.1.0
 
 //Copyright 2014 Changsi An
 
