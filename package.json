@@ -1,0 +1,28 @@
+{
+  "name": "backbone-mvc",
+  "version": "1.1.0",
+  "description": "Controller support for Backbone",
+  "main": "backbone-mvc.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chance-an/backbone-mvc.git"
+  },
+  "keywords": [
+    "backbone",
+    "mvc",
+    "controller"
+  ],
+  "author": "Changsi An",
+  "license": "LGPL",
+  "bugs": {
+    "url": "https://github.com/chance-an/backbone-mvc/issues"
+  },
+  "homepage": "https://github.com/chance-an/backbone-mvc"
+}
