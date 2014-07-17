@@ -16,14 +16,26 @@
 */
 
 (function(){
-    'use strict';
+    "use strict";
 
     requirejs.config({
         baseUrl: '../',
         paths: {
-            'BackboneMVC' : 'backbone-mvc'
+            'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min',
+            'BackboneMVC' : 'backbone-mvc',
+            'backbone': 'http://backbonejs.org/backbone-min',
+            'underscore': 'http://underscorejs.org/underscore-min',
+            'controllers' : 'example/requirejs/controllers'
+        },
+        shim:{
+            'backbone': ['underscore'],
+            'BackboneMVC' : ['backbone']
         }
     });
+})();
+
+function defineTestCases() {
+    "use strict";
 
     function compareObject(obj1, obj2){
         var keys1 = _.keys(obj1);
@@ -69,6 +81,7 @@
 
         var parentMethodMock = jasmine.createSpy('parentMethodMock'),
             childMethodMock = jasmine.createSpy('childMethodMock');
+        console.log(window.$);
         var deferred = new $.Deferred();
 
         var Parent = BackboneMVC.Controller.extend({
@@ -518,7 +531,7 @@
         });
 
     });
-})();
+}
 
 /**
  * jasmine boilerplate
@@ -537,14 +550,17 @@
     jasmineEnv.specFilter = function (spec) {
         return htmlReporter.specFilter(spec);
     };
+    require(['jquery', 'backbone', 'BackboneMVC'], function($, Backbone, BackboneMVC){
+        defineTestCases();
 
-    $(document).ready(function(){
-        window.location = "#"; //clear hash in the url, so no prior information will affect the first action triggering
+        $(document).ready(function(){
+            window.location = "#"; //clear hash in the url, so no prior information will affect the first action triggering
 
-        var router = new BackboneMVC.Router();
-        Backbone.history.start();
-        execJasmine();
+            var router = new BackboneMVC.Router();
+            Backbone.history.start();
 
+            execJasmine();
+        });
     });
 
     function execJasmine() {

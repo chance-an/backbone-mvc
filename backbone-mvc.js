@@ -1,6 +1,6 @@
 //BackboneMVC 1.0
 
-//Copyright 2012 Changsi An
+//Copyright 2014 Changsi An
 
 //This file is part of Backbone-MVC.
 //
@@ -56,19 +56,36 @@
 
 
 //------------------------------------------------------------------------------
-(function () {
-    'use strict';
+(function(global, factory) {
     var PRODUCT_NAME = 'BackboneMVC';
-
-    //check prerequisites
-    if (typeof Backbone === 'undefined' || typeof _ === 'undefined') {
-        return;
-    }
-
     /**
      * @namesapce BackboneMVC
      */
-    var BackboneMVC = window[PRODUCT_NAME] = {};
+    if (global[PRODUCT_NAME]) {
+        return;
+    }
+    var BackboneMVC = global[PRODUCT_NAME] = {};
+
+    if (typeof define === 'function' && define.amd) {
+        define(['backbone', 'underscore', 'jquery'], function (backbone, underscore, jquery) {
+            factory(global, BackboneMVC, backbone, underscore, jquery);
+            return BackboneMVC;
+        });
+    }else if(typeof exports !== 'undefined') {
+        var _ = require('underscore');
+        var $ = require('jquery');
+        var backbone = require('backbone');
+        factory(global, exports, backbone, _, $);
+    }else{
+        // No moduling framework is detected, assume it's under global scope.
+        factory(global, BackboneMVC, global.Backbone, global._, global.$);
+    }
+})(this, function (global, BackboneMVC, Backbone, _, $) {
+    'use strict';
+    //check prerequisites
+    if (typeof Backbone == "undefined" || typeof _ === 'undefined') {
+        return;
+    }
 
     /**
      * This is the base prototype of the Controller classes.
@@ -128,7 +145,7 @@
          */
         namespace:function (namespaceString) {
             var components = namespaceString.split('.');
-            var node = window;
+            var node = global;
             for (var i = 0, l = components.length; i < l; i++) {
                 if (node[components[i]] === undefined) {
                     node[components[i]] = {};
@@ -539,12 +556,4 @@
         }
         router._history.push([controller_name, action, _arguments]);
     }
-})();
-
-// Register as a named AMD module, since BackboneMVC can be concatenated with
-// other files that may use define, but not via a proper concatenation script
-// that understands anonymous AMD modules. A named AMD is safest and most robust
-// way to register.
-if ( typeof define === "function" && define.amd ) {
-    define( "BackboneMVC", [], function () { return BackboneMVC; } );
-}
+});
