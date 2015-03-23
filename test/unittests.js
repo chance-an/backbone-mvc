@@ -439,6 +439,7 @@ function defineTestCases() {
         var defaultIndexCallback = jasmine.createSpy('defaultIndex');
         var customizedHandlerCallback = jasmine.createSpy('customizedHandler');
         var controllerAction = jasmine.createSpy('controllerAction');
+        var four0fourFunction = jasmine.createSpy('controllerAction');
 
         var initialize = _.once(function(){ //_.once() guarantees that this function is only run once.
             Backbone.history.stop();
@@ -451,7 +452,8 @@ function defineTestCases() {
 
                 index : defaultIndexCallback,
 
-                'customized-handler': customizedHandlerCallback
+                'customized-handler': customizedHandlerCallback,
+                '404': four0fourFunction
             }))();
 
 
@@ -507,7 +509,7 @@ function defineTestCases() {
             });
         });
 
-        it("it should grant higher priority to customized routing rules than automatic routing", function(){
+        it("should grant higher priority to customized routing rules than automatic routing", function(){
             runs(function(){
                 window.location = "#cntr/action/fixed_value";
             });
@@ -527,6 +529,18 @@ function defineTestCases() {
 
             runs(function(){
                 expect(controllerAction).toHaveBeenCalledWith('value');
+            });
+        });
+
+        it("should have 404 handler customizable", function(){
+            runs(function(){
+                window.location = "#not/a/controller/action";
+            });
+
+            waits(50);
+
+            runs(function(){
+                expect(four0fourFunction).toHaveBeenCalled();
             });
         });
 

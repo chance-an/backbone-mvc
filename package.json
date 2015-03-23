@@ -1,6 +1,6 @@
 {
   "name": "backbone-mvc",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Controller support for Backbone",
   "main": "backbone-mvc.js",
   "directories": {
