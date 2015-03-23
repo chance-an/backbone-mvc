@@ -263,7 +263,7 @@
 
             function extend(properties){
                 var _routes = _.extend(properties.routes || {}, _inherentRouterProperties.routes );
-                return Backbone.Router.extend(_.extend(properties, _inherentRouterProperties, { routes: _routes }));
+                return Backbone.Router.extend(_.extend({}, _inherentRouterProperties, properties, { routes: _routes }));
             }
 
             var RouterClass = Backbone.Router.extend(
